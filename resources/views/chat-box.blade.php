@@ -17,7 +17,7 @@
             class="basement-chat-box__open-button bm-h-full bm-w-full bm-rounded-full bm-border bm-bg-white bm-text-blue-500 bm-shadow-lg bm-transition bm-duration-500 hover:bm-bg-blue-500 hover:bm-text-white"
             x-on:click="isMinimized = false"
             x-bind:class="isMinimized === true ? '' : 'bm-hidden'"
-            x-bind:data-title="totalUnreadMessages === 0 ? 'Open chat box' : `There are ${totalUnreadMessages} unread messages`"
+            x-bind:data-title="totalUnreadMessages === 0 ? 'Katso viestit' : `Sinulla on ${totalUnreadMessages} uutta viestiä`"
         >
             <template x-if="totalUnreadMessages === 0">
                 <x-basement::atoms.icons.far-comments class="bm-m-auto bm-h-auto bm-w-10" />

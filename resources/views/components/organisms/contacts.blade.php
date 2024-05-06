@@ -11,12 +11,12 @@
 >
     <x-basement::organisms.header class="bm-z-30">
         <x-slot:title>
-            <x-basement::atoms.icons.fas-comments class="bm-my-1 bm-inline bm-w-4" /> Messaging
+            <x-basement::atoms.icons.fas-comments class="bm-my-1 bm-inline bm-w-4" /> Viestit
         </x-slot:title>
 
         <x-slot:buttons>
             <x-basement::atoms.buttons.header
-                data-title="Mute notifications"
+                data-title="Ilmoitukset pois"
                 x-show="isNotificationAllowed === true && hasNotificationPermission === true"
                 x-on:click="isNotificationAllowed = false"
             >
@@ -24,7 +24,7 @@
             </x-basement::atoms.buttons.header>
 
             <x-basement::atoms.buttons.header
-                data-title="Please configure your browser to allow notifications"
+                data-title="Ota ilmoitukset käyttöön"
                 x-show="hasNotificationPermission === false"
                 x-on:click="requestNotificationPermission"
             >
@@ -32,7 +32,7 @@
             </x-basement::atoms.buttons.header>
 
             <x-basement::atoms.buttons.header
-                data-title="Unmute notifications"
+                data-title="Ilmoitukset päälle"
                 x-show="isNotificationAllowed === false && hasNotificationPermission === true"
                 x-on:click="isNotificationAllowed = true"
             >
@@ -52,7 +52,7 @@
     >
 
         <x-basement::molecules.form-group class="bm-relative bm-col-span-full bm-block bm-py-4">
-            <x-slot:title>Search Contacts</x-slot:title>
+            <x-slot:title>Etsi kontakteja</x-slot:title>
             <x-slot:icon>
                 <x-basement::atoms.icons.fas-search class="bm-h-[0.9rem] bm-text-gray-400" />
             </x-slot:icon>
@@ -62,7 +62,7 @@
                 type="text"
                 x-model="search"
                 autocomplete="off"
-                placeholder="Search Contacts"
+                placeholder="Etsi kontakteja"
             />
         </x-basement::molecules.form-group>
 
@@ -78,7 +78,7 @@
 
                 <div
                     class="bm-relative bm-col-span-2"
-                    x-bind:data-title="`${contact.name} is ${contact.isOnline === true ? 'online' : 'offline'}`"
+                    x-bind:data-title="`${contact.name} on ${contact.isOnline === true ? 'paikalla' : 'poissa'}`"
                 >
 
                     <img
@@ -97,7 +97,7 @@
                     <div class="bm-grid bm-grid-cols-4">
                         <h4 class="bm-col-span-3 bm-truncate bm-text-sm bm-font-bold bm-text-gray-900">
                             <span
-                                x-text="(contact.id === {{ \Illuminate\Support\Facades\Auth::id() }} ? '(You) ' : '') + contact.name"
+                                x-text="(contact.id === {{ \Illuminate\Support\Facades\Auth::id() }} ? '(Sinä) ' : '') + contact.name"
                                 x-bind:data-title="contact.name"
                             ></span>
                         </h4>
@@ -124,7 +124,7 @@
                                 </span>
                             </template>
                             <template x-if="contact.typing === true">
-                                <span x-bind:data-title="`${contact.name} is typing ...`">
+                                <span x-bind:data-title="`${contact.name} kirjoittaa...`">
                                     <span
                                         class="bm-inline-block bm-h-1 bm-w-1 bm-animate-bounce bm-rounded-full bm-bg-gray-900"
                                     ></span>
@@ -145,7 +145,7 @@
                                 class="basement-contacts__user-unread-messages-count bm-rounded-md bm-bg-blue-400 bm-px-1 bm-text-xs bm-font-bold bm-text-white"
                                 x-show="contact.unreadMessages > 0"
                                 x-text="contact.unreadMessages"
-                                x-bind:data-title="`There are ${contact.unreadMessages} unread messages`"
+                                x-bind:data-title="`Sinulla on ${contact.unreadMessages} uutta viestiä`"
                             ></span>
                         </p>
                     </div>
@@ -156,6 +156,6 @@
         <p
             class="bm-text-center bm-text-sm bm-font-semibold bm-text-gray-600"
             x-show="filteredContacts.length === 0"
-        >No contacts found</p>
+        >Ei kontakteja</p>
     </section>
 </div>

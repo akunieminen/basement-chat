@@ -14,7 +14,7 @@
             <p
                 class="bm-max-w-[90%] bm-overflow-hidden bm-text-ellipsis bm-whitespace-nowrap"
                 x-text="receiver?.name"
-                x-bind:data-title="`${receiver?.name} is ${receiver?.isOnline === true ? 'online' : 'offline'}`"
+                x-bind:data-title="`${receiver?.name} on ${receiver?.isOnline === true ? 'paikalla' : 'poissa'}`"
             ></p>
             <x-basement::atoms.icons.fas-circle
                 class="bm-h-[0.75rem]"
@@ -24,7 +24,7 @@
 
         <x-slot:buttons>
             <x-basement::atoms.buttons.header
-                data-title="Search messages"
+                data-title="Etsi viesteistä"
                 x-show="isMessageBoxOpened"
                 x-on:click="isSearchOpened = !isSearchOpened"
             >
@@ -34,7 +34,7 @@
             <x-basement::atoms.buttons.header-minimize x-on:click="isMinimized = true" />
 
             <x-basement::atoms.buttons.header
-                data-title="Back to contact list"
+                data-title="Takaisin kontakteihin"
                 x-on:click="isContactOpened = true; isMessageBoxOpened = false"
             >
                 <x-basement::atoms.icons.fas-angle-left class="bm-m-auto bm-h-[0.9rem]" />
@@ -56,7 +56,7 @@
             <div class="bm-flex bm-flex-col bm-gap-y-1 bm-px-2">
                 <p class="bm-font-semibold">
                     <x-basement::atoms.icons.fas-check-double class="bm-inline bm-w-[0.9rem] bm-text-blue-500" />
-                    Read
+                    Luettu
                 </p>
                 <p
                     class="bm-text-gray-700"
@@ -67,7 +67,7 @@
             <div class="bm-flex bm-flex-col bm-gap-y-1 bm-px-2">
                 <p class="bm-font-semibold">
                     <x-basement::atoms.icons.fas-check-double class="bm-inline bm-w-[0.9rem] bm-text-gray-500" />
-                    Delivered
+                    Lähetetty
                 </p>
                 <p
                     class="bm-text-gray-700"
@@ -96,7 +96,7 @@
                 x-on:click.outside="isSearchOpened = false"
             >
 
-                <x-slot:title>Search Messages</x-slot:title>
+                <x-slot:title>Etsi viesteistä</x-slot:title>
                 <x-slot:icon>
                     <x-basement::atoms.icons.fas-search class="bm-ml-2 bm-h-[0.9rem] bm-text-gray-400" />
                 </x-slot:icon>
@@ -107,7 +107,7 @@
                     x-model.debounce.1000ms="searchKeyword"
                     x-on:keyup.debounce.1100ms="mount"
                     autocomplete="off"
-                    placeholder="Search Messages"
+                    placeholder="Etsi viesteistä"
                 />
             </x-basement::molecules.form-group>
         </div>
@@ -119,7 +119,7 @@
                     x-show="urlShowMore !== null"
                     x-on:click="mountMore"
                 >
-                    <span x-show="isLoadingShowMore === false">Load more messages</span>
+                    <span x-show="isLoadingShowMore === false">Lataa lisää viestejä</span>
                     <x-basement::atoms.icons.fas-circle-notch
                         class="bm-mx-auto bm-h-6 bm-animate-spin bm-text-blue-500"
                         x-show="isLoadingShowMore === true"
@@ -140,7 +140,7 @@
                                     class="bm--mx-3 bm-mb-3 bm-mt-1 bm-rounded-b-lg bm-border-b bm-border-gray-300 bm-bg-gray-50 bm-py-1 bm-text-center bm-font-semibold bm-text-blue-500"
                                     x-show="unreadMessageCursor === message.id"
                                 >
-                                    Unread Messages
+                                    Lukemattomia viestejä
                                 </div>
                                 <div
                                     class="bm-group bm-relative bm-mb-5 bm-flex"
@@ -162,7 +162,7 @@
                                             <div
                                                 class="bm-absolute bm-right-0 bm-flex bm-space-x-1 bm-rounded-b-lg bm-bg-white bm-px-2 bm-py-1 bm-text-xs bm-font-bold bm-shadow-md"
                                                 data-tippy-placement="left"
-                                                x-bind:data-title="`Sent at ${message.createdAt.withinDateTimeFormat}`"
+                                                x-bind:data-title="`Lähetetty ${message.createdAt.withinDateTimeFormat}`"
                                             >
                                                 <x-basement::atoms.icons.fas-check-double
                                                     class="bm-inline bm-w-3"
@@ -176,7 +176,7 @@
                                             <span
                                                 class="bm-absolute bm-left-0 bm-rounded-b-lg bm-bg-white bm-px-2 bm-py-1 bm-text-xs bm-font-bold bm-shadow-md"
                                                 data-tippy-placement="right"
-                                                x-bind:data-title="`Sent at ${message.createdAt.withinDateTimeFormat}`"
+                                                x-bind:data-title="`Lähetetty ${message.createdAt.withinDateTimeFormat}`"
                                                 x-text="message.createdAt.withinTimeFormat"
                                             >
                                             </span>
@@ -187,7 +187,7 @@
                                         <div class="bm-w-[10%]">
                                             <x-basement::atoms.buttons.secondary
                                                 class="bm-hidden bm-h-full bm-w-full bm-text-gray-400 group-hover:bm-block"
-                                                data-title="Manage this message"
+                                                data-title="Hallitse viestiä"
                                                 x-on:click.debounce.10ms="messageIdWithOpenDialog = message.id"
                                             >
                                                 <x-basement::atoms.icons.fas-ellipsis-v class="bm-inline bm-h-3" />
@@ -204,7 +204,7 @@
                                                     <li class="bm-border-gray-300">
                                                         <x-basement::atoms.buttons.secondary
                                                             class="bm-w-full bm-px-2 bm-py-1 bm-text-center"
-                                                            data-title="Information about this message"
+                                                            data-title="Infoa viestistä"
                                                             x-on:click="isInfoBoxOpened = true; selectedMessage = message"
                                                         >
                                                             Info
@@ -224,7 +224,7 @@
                         <div class="bm-group bm-relative bm-flex bm-flex-row">
                             <p
                                 class="bm-rounded-r-lg bm-rounded-t-lg bm-bg-gray-100 bm-px-2 bm-py-1"
-                                x-bind:data-title="`${receiver?.name} is typing ...`"
+                                x-bind:data-title="`${receiver?.name} kirjoittaa...`"
                             >
                                 <span
                                     class="bm-inline-block bm-h-1 bm-w-1 bm-animate-bounce bm-rounded-full bm-bg-gray-900"
@@ -255,14 +255,14 @@
             >
                 <x-basement::atoms.icons.fas-angle-down
                     class="bm-h-5 bm-w-5"
-                    data-title="Go to the last message"
+                    data-title="Siirry viimeiseen viestiin"
                 />
 
                 <div class="bm-absolute bm-bottom-7 bm-left-0 bm-right-0 bm-text-center">
                     <span
                         class="bm-rounded-xl bm-border bm-bg-blue-500 bm-px-1 bm-text-sm bm-font-bold bm-text-white"
                         x-show="receiver?.unreadMessages > 0"
-                        x-bind:data-title="`There are ${receiver?.unreadMessages} unread messages`"
+                        x-bind:data-title="`Sinulla on ${receiver?.unreadMessages} uutta viestiä`"
                         x-text="receiver?.unreadMessages"
                     >
                     </span>
@@ -277,7 +277,7 @@
         >
 
             <x-basement::molecules.form-group class="bm-col-span-7">
-                <x-slot:title>Message</x-slot:title>
+                <x-slot:title>Viesti</x-slot:title>
                 <x-slot:icon x-show="isLoadingSentMessage === true">
                     <x-basement::atoms.icons.fas-circle-notch
                         class="bm-ml-2 bm-h-[0.9rem] bm-animate-spin bm-text-blue-500"
@@ -295,14 +295,14 @@
                     x-on:keydown.throttle.1000ms="currentlyTyping"
                     autocomplete="off"
                     required=""
-                    placeholder="Message"
+                    placeholder="Viesti"
                     maxlength="255"
                 />
             </x-basement::molecules.form-group>
 
             <x-basement::atoms.buttons.primary
                 class="basemment-private-messages__send-new-message-button-button bm-col-span-1 bm-h-full bm-w-8"
-                data-title="Send message"
+                data-title="Lähetä viesti"
                 type="submit"
                 x-bind:disabled="isLoadingSentMessage === true"
             >
