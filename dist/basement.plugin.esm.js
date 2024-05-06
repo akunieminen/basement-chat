@@ -8527,7 +8527,7 @@ class DateFormatter {
      */
     timeFormat = {
         hour: 'numeric',
-        hour12: true,
+        hour12: false,
         minute: 'numeric',
     };
     /**
@@ -8556,7 +8556,7 @@ class DateFormatter {
             return intlFormat(this.date, this.timeFormat);
         }
         if (isYesterday(this.date) === true) {
-            return 'Yesterday';
+            return 'Eilen';
         }
         return intlFormat(this.date, this.shortDateFormat);
     }
