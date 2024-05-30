@@ -310,12 +310,6 @@
                     maxlength="5000"
                     :rows="calculateRows(newMessageValue)"
                 ></x-basement::atoms.textarea>
-
-                <script>
-                function calculateRows(text) {
-                    return Math.min(Math.ceil(text.split('\n').length), 5);
-                }
-                </script>
             </x-basement::molecules.form-group>
 
             <x-basement::atoms.buttons.primary

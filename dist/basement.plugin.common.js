@@ -10135,6 +10135,12 @@ var privateMessageComponent = () => {
             });
         },
         /**
+         * Calculate the amount of rows that the message value will take.
+         */
+        setMessageRows(value) {
+            return Math.max(value.split('\n').length, 1);
+        },
+        /**
          * Scroll component view to given message id.
          */
         scrollTo(id, options = {}) {
