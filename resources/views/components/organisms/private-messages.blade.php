@@ -284,7 +284,7 @@
                     />
                 </x-slot:icon>
 
-                <x-basement::atoms.input
+                <x-basement::atoms.textarea
                     class="basement-private-messages__new-message-input"
                     type="text"
                     aria-autocomplete="none"
@@ -293,10 +293,12 @@
                     x-bind:class="isLoadingSentMessage === true ? 'bm-pl-9' : ''"
                     x-model="newMessageValue"
                     x-on:keydown.throttle.1000ms="currentlyTyping"
+                    x-on:keydown.enter.prevent="sendNewMessage"
                     autocomplete="off"
                     required=""
                     placeholder="Viesti"
-                    maxlength="255"
+                    maxlength="5000"
+                    rows="1"
                 />
             </x-basement::molecules.form-group>
 
