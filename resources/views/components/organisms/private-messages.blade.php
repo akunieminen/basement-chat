@@ -294,16 +294,16 @@
                     aria-autocomplete="none"
                     aria-required="true"
                     x-bind:disabled="isLoadingSentMessage === true"
-                    x-bind:class="isLoadingSentMessage === true ? 'bm-pl-9' : ''"
+                    x-bind:class="isLoadingSentMessage === true? 'bm-pl-9' : ''"
                     x-model="newMessageValue"
                     x-on:keydown.throttle.1000ms="currentlyTyping"
-                    x-on:keydown.enter.prevent="sendNewMessage"
+                    x-on:keydown.enter.prevent="if (!$event.shiftKey) { sendNewMessage(); }"
                     autocomplete="off"
                     required=""
                     placeholder="Viesti"
                     maxlength="5000"
                     rows="1"
-                />
+                ></x-basement::atoms.textarea>
             </x-basement::molecules.form-group>
 
             <x-basement::atoms.buttons.primary
