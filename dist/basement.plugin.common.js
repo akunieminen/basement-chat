@@ -2,11 +2,11 @@
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-var push_minExports = {};
-var push_min = {
-  get exports(){ return push_minExports; },
-  set exports(v){ push_minExports = v; },
-};
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
+
+var push_min = {exports: {}};
 
 /**
  * @license
@@ -45,13 +45,15 @@ var push_min = {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+push_min.exports;
 
 (function (module, exports) {
 	!function(i,t){module.exports=t();}(commonjsGlobal,function(){var i={errors:{incompatible:"".concat("PushError:"," Push.js is incompatible with browser."),invalid_plugin:"".concat("PushError:"," plugin class missing from plugin manifest (invalid plugin). Please check the documentation."),invalid_title:"".concat("PushError:"," title of notification must be a string"),permission_denied:"".concat("PushError:"," permission request declined"),sw_notification_error:"".concat("PushError:"," could not show a ServiceWorker notification due to the following reason: "),sw_registration_error:"".concat("PushError:"," could not register the ServiceWorker due to the following reason: "),unknown_interface:"".concat("PushError:"," unable to create notification: unknown interface")}};function t(i){return (t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(i){return typeof i}:function(i){return i&&"function"==typeof Symbol&&i.constructor===Symbol&&i!==Symbol.prototype?"symbol":typeof i})(i)}function n(i,t){if(!(i instanceof t))throw new TypeError("Cannot call a class as a function")}function e(i,t){for(var n=0;n<t.length;n++){var e=t[n];e.enumerable=e.enumerable||!1,e.configurable=!0,"value"in e&&(e.writable=!0),Object.defineProperty(i,e.key,e);}}function o(i,t,n){return t&&e(i.prototype,t),n&&e(i,n),i}function r(i,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function");i.prototype=Object.create(t&&t.prototype,{constructor:{value:i,writable:!0,configurable:!0}}),t&&c(i,t);}function s(i){return (s=Object.setPrototypeOf?Object.getPrototypeOf:function(i){return i.__proto__||Object.getPrototypeOf(i)})(i)}function c(i,t){return (c=Object.setPrototypeOf||function(i,t){return i.__proto__=t,i})(i,t)}function a(i,t){return !t||"object"!=typeof t&&"function"!=typeof t?function(i){if(void 0===i)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return i}(i):t}var u=function(){function i(t){n(this,i),this._win=t,this.GRANTED="granted",this.DEFAULT="default",this.DENIED="denied",this._permissions=[this.GRANTED,this.DEFAULT,this.DENIED];}return o(i,[{key:"request",value:function(i,t){return arguments.length>0?this._requestWithCallback.apply(this,arguments):this._requestAsPromise()}},{key:"_requestWithCallback",value:function(i,t){var n,e=this,o=this.get(),r=!1,s=function(){var n=arguments.length>0&&void 0!==arguments[0]?arguments[0]:e._win.Notification.permission;r||(r=!0,void 0===n&&e._win.webkitNotifications&&(n=e._win.webkitNotifications.checkPermission()),n===e.GRANTED||0===n?i&&i():t&&t());};o!==this.DEFAULT?s(o):this._win.webkitNotifications&&this._win.webkitNotifications.checkPermission?this._win.webkitNotifications.requestPermission(s):this._win.Notification&&this._win.Notification.requestPermission?(n=this._win.Notification.requestPermission(s))&&n.then&&n.then(s).catch(function(){t&&t();}):i&&i();}},{key:"_requestAsPromise",value:function(){var i=this,t=this.get(),n=t!==this.DEFAULT,e=this._win.Notification&&this._win.Notification.requestPermission,o=this._win.webkitNotifications&&this._win.webkitNotifications.checkPermission;return new Promise(function(r,s){var c,a=!1,u=function(t){a||(a=!0,!function(t){return t===i.GRANTED||0===t}(t)?s():r());};n?u(t):o?i._win.webkitNotifications.requestPermission(function(i){u(i);}):e?(c=i._win.Notification.requestPermission(u))&&c.then&&c.then(u).catch(s):r();})}},{key:"has",value:function(){return this.get()===this.GRANTED}},{key:"get",value:function(){return this._win.Notification&&this._win.Notification.permission?this._win.Notification.permission:this._win.webkitNotifications&&this._win.webkitNotifications.checkPermission?this._permissions[this._win.webkitNotifications.checkPermission()]:navigator.mozNotification?this.GRANTED:this._win.external&&this._win.external.msIsSiteMode?this._win.external.msIsSiteMode()?this.GRANTED:this.DEFAULT:this.GRANTED}}]),i}(),f=function(){function i(){n(this,i);}return o(i,null,[{key:"isUndefined",value:function(i){return void 0===i}},{key:"isNull",value:function(i){return null===obj}},{key:"isString",value:function(i){return "string"==typeof i}},{key:"isFunction",value:function(i){return i&&"[object Function]"==={}.toString.call(i)}},{key:"isObject",value:function(i){return "object"===t(i)}},{key:"objectMerge",value:function(i,t){for(var n in t)i.hasOwnProperty(n)&&this.isObject(i[n])&&this.isObject(t[n])?this.objectMerge(i[n],t[n]):i[n]=t[n];}}]),i}(),l=function i(t){n(this,i),this._win=t;},h=function(i){function t(){return n(this,t),a(this,s(t).apply(this,arguments))}return r(t,l),o(t,[{key:"isSupported",value:function(){return void 0!==this._win.Notification}},{key:"create",value:function(i,t){return new this._win.Notification(i,{icon:f.isString(t.icon)||f.isUndefined(t.icon)||f.isNull(t.icon)?t.icon:t.icon.x32,body:t.body,tag:t.tag,requireInteraction:t.requireInteraction})}},{key:"close",value:function(i){i.close();}}]),t}(),_=function(t){function e(){return n(this,e),a(this,s(e).apply(this,arguments))}return r(e,l),o(e,[{key:"isSupported",value:function(){return void 0!==this._win.navigator&&void 0!==this._win.navigator.serviceWorker}},{key:"getFunctionBody",value:function(i){var t=i.toString().match(/function[^{]+{([\s\S]*)}$/);return null!=t&&t.length>1?t[1]:null}},{key:"create",value:function(t,n,e,o,r){var s=this;this._win.navigator.serviceWorker.register(o),this._win.navigator.serviceWorker.ready.then(function(o){var c={id:t,link:e.link,origin:document.location.href,onClick:f.isFunction(e.onClick)?s.getFunctionBody(e.onClick):"",onClose:f.isFunction(e.onClose)?s.getFunctionBody(e.onClose):""};void 0!==e.data&&null!==e.data&&(c=Object.assign(c,e.data)),o.showNotification(n,{icon:e.icon,body:e.body,vibrate:e.vibrate,tag:e.tag,data:c,requireInteraction:e.requireInteraction,silent:e.silent}).then(function(){o.getNotifications().then(function(i){o.active.postMessage(""),r(i);});}).catch(function(t){throw new Error(i.errors.sw_notification_error+t.message)});}).catch(function(t){throw new Error(i.errors.sw_registration_error+t.message)});}},{key:"close",value:function(){}}]),e}(),v=function(i){function t(){return n(this,t),a(this,s(t).apply(this,arguments))}return r(t,l),o(t,[{key:"isSupported",value:function(){return void 0!==this._win.navigator.mozNotification}},{key:"create",value:function(i,t){var n=this._win.navigator.mozNotification.createNotification(i,t.body,t.icon);return n.show(),n}}]),t}(),d=function(i){function t(){return n(this,t),a(this,s(t).apply(this,arguments))}return r(t,l),o(t,[{key:"isSupported",value:function(){return void 0!==this._win.external&&void 0!==this._win.external.msIsSiteMode}},{key:"create",value:function(i,t){return this._win.external.msSiteModeClearIconOverlay(),this._win.external.msSiteModeSetIconOverlay(f.isString(t.icon)||f.isUndefined(t.icon)?t.icon:t.icon.x16,i),this._win.external.msSiteModeActivate(),null}},{key:"close",value:function(){this._win.external.msSiteModeClearIconOverlay();}}]),t}(),w=function(i){function t(){return n(this,t),a(this,s(t).apply(this,arguments))}return r(t,l),o(t,[{key:"isSupported",value:function(){return void 0!==this._win.webkitNotifications}},{key:"create",value:function(i,t){var n=this._win.webkitNotifications.createNotification(t.icon,i,t.body);return n.show(),n}},{key:"close",value:function(i){i.cancel();}}]),t}();return new(function(){function t(i){n(this,t),this._currentId=0,this._notifications={},this._win=i,this.Permission=new u(i),this._agents={desktop:new h(i),chrome:new _(i),firefox:new v(i),ms:new d(i),webkit:new w(i)},this._configuration={serviceWorker:"/serviceWorker.min.js",fallback:function(i){}};}return o(t,[{key:"_closeNotification",value:function(t){var n=!0,e=this._notifications[t];if(void 0!==e){if(n=this._removeNotification(t),this._agents.desktop.isSupported())this._agents.desktop.close(e);else if(this._agents.webkit.isSupported())this._agents.webkit.close(e);else {if(!this._agents.ms.isSupported())throw n=!1,new Error(i.errors.unknown_interface);this._agents.ms.close();}return n}return !1}},{key:"_addNotification",value:function(i){var t=this._currentId;return this._notifications[t]=i,this._currentId++,t}},{key:"_removeNotification",value:function(i){var t=!1;return this._notifications.hasOwnProperty(i)&&(delete this._notifications[i],t=!0),t}},{key:"_prepareNotification",value:function(i,t){var n,e=this;return n={get:function(){return e._notifications[i]},close:function(){e._closeNotification(i);}},t.timeout&&setTimeout(function(){n.close();},t.timeout),n}},{key:"_serviceWorkerCallback",value:function(i,t,n){var e=this,o=this._addNotification(i[i.length-1]);navigator&&navigator.serviceWorker&&(navigator.serviceWorker.addEventListener("message",function(i){var t=JSON.parse(i.data);"close"===t.action&&Number.isInteger(t.id)&&e._removeNotification(t.id);}),n(this._prepareNotification(o,t))),n(null);}},{key:"_createCallback",value:function(i,t,n){var e,o=this,r=null;if(t=t||{},e=function(i){o._removeNotification(i),f.isFunction(t.onClose)&&t.onClose.call(o,r);},this._agents.desktop.isSupported())try{r=this._agents.desktop.create(i,t);}catch(e){var s=this._currentId,c=this.config().serviceWorker;this._agents.chrome.isSupported()&&this._agents.chrome.create(s,i,t,c,function(i){return o._serviceWorkerCallback(i,t,n)});}else this._agents.webkit.isSupported()?r=this._agents.webkit.create(i,t):this._agents.firefox.isSupported()?this._agents.firefox.create(i,t):this._agents.ms.isSupported()?r=this._agents.ms.create(i,t):(t.title=i,this.config().fallback(t));if(null!==r){var a=this._addNotification(r),u=this._prepareNotification(a,t);f.isFunction(t.onShow)&&r.addEventListener("show",t.onShow),f.isFunction(t.onError)&&r.addEventListener("error",t.onError),f.isFunction(t.onClick)&&r.addEventListener("click",t.onClick),r.addEventListener("close",function(){e(a);}),r.addEventListener("cancel",function(){e(a);}),n(u);}n(null);}},{key:"create",value:function(t,n){var e,o=this;if(!f.isString(t))throw new Error(i.errors.invalid_title);return e=this.Permission.has()?function(i,e){try{o._createCallback(t,n,i);}catch(i){e(i);}}:function(e,r){o.Permission.request().then(function(){o._createCallback(t,n,e);}).catch(function(){r(i.errors.permission_denied);});},new Promise(e)}},{key:"count",value:function(){var i,t=0;for(i in this._notifications)this._notifications.hasOwnProperty(i)&&t++;return t}},{key:"close",value:function(i){var t;for(t in this._notifications)if(this._notifications.hasOwnProperty(t)&&this._notifications[t].tag===i)return this._closeNotification(t)}},{key:"clear",value:function(){var i,t=!0;for(i in this._notifications)this._notifications.hasOwnProperty(i)&&(t=t&&this._closeNotification(i));return t}},{key:"supported",value:function(){var i=!1;for(var t in this._agents)this._agents.hasOwnProperty(t)&&(i=i||this._agents[t].isSupported());return i}},{key:"config",value:function(i){return (void 0!==i||null!==i&&f.isObject(i))&&f.objectMerge(this._configuration,i),this._configuration}},{key:"extend",value:function(t){var n,e={}.hasOwnProperty;if(!e.call(t,"plugin"))throw new Error(i.errors.invalid_plugin);for(var o in e.call(t,"config")&&f.isObject(t.config)&&null!==t.config&&this.config(t.config),n=new(t.plugin)(this.config()))e.call(n,o)&&f.isFunction(n[o])&&(this[o]=n[o]);}}]),t}())("undefined"!=typeof window?window:commonjsGlobal)});
 	
-} (push_min));
+} (push_min, push_min.exports));
 
-var Push = push_minExports;
+var push_minExports = push_min.exports;
+var Push = /*@__PURE__*/getDefaultExportFromCjs(push_minExports);
 
 var top = 'top';
 var bottom = 'bottom';
@@ -3720,69 +3722,51 @@ var chatBoxComponent = () => ({
     },
 });
 
-var formatExports$1 = {};
-var format$1 = {
-  get exports(){ return formatExports$1; },
-  set exports(v){ formatExports$1 = v; },
-};
+var format$1 = {exports: {}};
 
-var formatExports = {};
-var format = {
-  get exports(){ return formatExports; },
-  set exports(v){ formatExports = v; },
-};
+var format = {exports: {}};
 
-var interopRequireDefaultExports = {};
-var interopRequireDefault = {
-  get exports(){ return interopRequireDefaultExports; },
-  set exports(v){ interopRequireDefaultExports = v; },
-};
+var interopRequireDefault = {exports: {}};
+
+interopRequireDefault.exports;
 
 (function (module) {
-	function _interopRequireDefault(obj) {
-	  return obj && obj.__esModule ? obj : {
-	    "default": obj
+	function _interopRequireDefault(e) {
+	  return e && e.__esModule ? e : {
+	    "default": e
 	  };
 	}
-	module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+	module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports; 
 } (interopRequireDefault));
 
-var isValidExports = {};
-var isValid = {
-  get exports(){ return isValidExports; },
-  set exports(v){ isValidExports = v; },
-};
+var interopRequireDefaultExports = interopRequireDefault.exports;
 
-var isDateExports = {};
-var isDate = {
-  get exports(){ return isDateExports; },
-  set exports(v){ isDateExports = v; },
-};
+var isValid = {exports: {}};
 
-var _typeofExports = {};
-var _typeof$1 = {
-  get exports(){ return _typeofExports; },
-  set exports(v){ _typeofExports = v; },
-};
+var isDate = {exports: {}};
+
+var _typeof$1 = {exports: {}};
+
+_typeof$1.exports;
 
 (function (module) {
-	function _typeof(obj) {
+	function _typeof(o) {
 	  "@babel/helpers - typeof";
 
-	  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-	    return typeof obj;
-	  } : function (obj) {
-	    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-	  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
+	  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+	    return typeof o;
+	  } : function (o) {
+	    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+	  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
 	}
-	module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
+	module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports; 
 } (_typeof$1));
 
-var requiredArgsExports = {};
-var requiredArgs$1 = {
-  get exports(){ return requiredArgsExports; },
-  set exports(v){ requiredArgsExports = v; },
-};
+var _typeofExports = _typeof$1.exports;
+
+var requiredArgs$1 = {exports: {}};
+
+requiredArgs$1.exports;
 
 (function (module, exports) {
 
@@ -3795,8 +3779,12 @@ var requiredArgs$1 = {
 	    throw new TypeError(required + ' argument' + (required > 1 ? 's' : '') + ' required, but only ' + args.length + ' present');
 	  }
 	}
-	module.exports = exports.default;
-} (requiredArgs$1, requiredArgsExports));
+	module.exports = exports.default; 
+} (requiredArgs$1, requiredArgs$1.exports));
+
+var requiredArgsExports = requiredArgs$1.exports;
+
+isDate.exports;
 
 (function (module, exports) {
 
@@ -3843,14 +3831,14 @@ var requiredArgs$1 = {
 	  (0, _index.default)(1, arguments);
 	  return value instanceof Date || (0, _typeof2.default)(value) === 'object' && Object.prototype.toString.call(value) === '[object Date]';
 	}
-	module.exports = exports.default;
-} (isDate, isDateExports));
+	module.exports = exports.default; 
+} (isDate, isDate.exports));
 
-var toDateExports$1 = {};
-var toDate$2 = {
-  get exports(){ return toDateExports$1; },
-  set exports(v){ toDateExports$1 = v; },
-};
+var isDateExports = isDate.exports;
+
+var toDate$2 = {exports: {}};
+
+toDate$2.exports;
 
 (function (module, exports) {
 
@@ -3911,8 +3899,12 @@ var toDate$2 = {
 	    return new Date(NaN);
 	  }
 	}
-	module.exports = exports.default;
-} (toDate$2, toDateExports$1));
+	module.exports = exports.default; 
+} (toDate$2, toDate$2.exports));
+
+var toDateExports$1 = toDate$2.exports;
+
+isValid.exports;
 
 (function (module, exports) {
 
@@ -3963,26 +3955,18 @@ var toDate$2 = {
 	  var date = (0, _index2.default)(dirtyDate);
 	  return !isNaN(Number(date));
 	}
-	module.exports = exports.default;
-} (isValid, isValidExports));
+	module.exports = exports.default; 
+} (isValid, isValid.exports));
 
-var subMillisecondsExports = {};
-var subMilliseconds = {
-  get exports(){ return subMillisecondsExports; },
-  set exports(v){ subMillisecondsExports = v; },
-};
+var isValidExports = isValid.exports;
 
-var addMillisecondsExports = {};
-var addMilliseconds = {
-  get exports(){ return addMillisecondsExports; },
-  set exports(v){ addMillisecondsExports = v; },
-};
+var subMilliseconds = {exports: {}};
 
-var toIntegerExports = {};
-var toInteger$1 = {
-  get exports(){ return toIntegerExports; },
-  set exports(v){ toIntegerExports = v; },
-};
+var addMilliseconds = {exports: {}};
+
+var toInteger$1 = {exports: {}};
+
+toInteger$1.exports;
 
 (function (module, exports) {
 
@@ -4000,8 +3984,12 @@ var toInteger$1 = {
 	  }
 	  return number < 0 ? Math.ceil(number) : Math.floor(number);
 	}
-	module.exports = exports.default;
-} (toInteger$1, toIntegerExports));
+	module.exports = exports.default; 
+} (toInteger$1, toInteger$1.exports));
+
+var toIntegerExports = toInteger$1.exports;
+
+addMilliseconds.exports;
 
 (function (module, exports) {
 
@@ -4037,8 +4025,12 @@ var toInteger$1 = {
 	  var amount = (0, _index.default)(dirtyAmount);
 	  return new Date(timestamp + amount);
 	}
-	module.exports = exports.default;
-} (addMilliseconds, addMillisecondsExports));
+	module.exports = exports.default; 
+} (addMilliseconds, addMilliseconds.exports));
+
+var addMillisecondsExports = addMilliseconds.exports;
+
+subMilliseconds.exports;
 
 (function (module, exports) {
 
@@ -4073,20 +4065,16 @@ var toInteger$1 = {
 	  var amount = (0, _index3.default)(dirtyAmount);
 	  return (0, _index.default)(dirtyDate, -amount);
 	}
-	module.exports = exports.default;
-} (subMilliseconds, subMillisecondsExports));
+	module.exports = exports.default; 
+} (subMilliseconds, subMilliseconds.exports));
 
-var formattersExports$1 = {};
-var formatters$1 = {
-  get exports(){ return formattersExports$1; },
-  set exports(v){ formattersExports$1 = v; },
-};
+var subMillisecondsExports = subMilliseconds.exports;
 
-var getUTCDayOfYearExports = {};
-var getUTCDayOfYear = {
-  get exports(){ return getUTCDayOfYearExports; },
-  set exports(v){ getUTCDayOfYearExports = v; },
-};
+var formatters$1 = {exports: {}};
+
+var getUTCDayOfYear = {exports: {}};
+
+getUTCDayOfYear.exports;
 
 (function (module, exports) {
 
@@ -4108,20 +4096,16 @@ var getUTCDayOfYear = {
 	  var difference = timestamp - startOfYearTimestamp;
 	  return Math.floor(difference / MILLISECONDS_IN_DAY) + 1;
 	}
-	module.exports = exports.default;
-} (getUTCDayOfYear, getUTCDayOfYearExports));
+	module.exports = exports.default; 
+} (getUTCDayOfYear, getUTCDayOfYear.exports));
 
-var getUTCISOWeekExports = {};
-var getUTCISOWeek = {
-  get exports(){ return getUTCISOWeekExports; },
-  set exports(v){ getUTCISOWeekExports = v; },
-};
+var getUTCDayOfYearExports = getUTCDayOfYear.exports;
 
-var startOfUTCISOWeekExports = {};
-var startOfUTCISOWeek = {
-  get exports(){ return startOfUTCISOWeekExports; },
-  set exports(v){ startOfUTCISOWeekExports = v; },
-};
+var getUTCISOWeek = {exports: {}};
+
+var startOfUTCISOWeek = {exports: {}};
+
+startOfUTCISOWeek.exports;
 
 (function (module, exports) {
 
@@ -4142,20 +4126,16 @@ var startOfUTCISOWeek = {
 	  date.setUTCHours(0, 0, 0, 0);
 	  return date;
 	}
-	module.exports = exports.default;
-} (startOfUTCISOWeek, startOfUTCISOWeekExports));
+	module.exports = exports.default; 
+} (startOfUTCISOWeek, startOfUTCISOWeek.exports));
 
-var startOfUTCISOWeekYearExports = {};
-var startOfUTCISOWeekYear = {
-  get exports(){ return startOfUTCISOWeekYearExports; },
-  set exports(v){ startOfUTCISOWeekYearExports = v; },
-};
+var startOfUTCISOWeekExports = startOfUTCISOWeek.exports;
 
-var getUTCISOWeekYearExports = {};
-var getUTCISOWeekYear = {
-  get exports(){ return getUTCISOWeekYearExports; },
-  set exports(v){ getUTCISOWeekYearExports = v; },
-};
+var startOfUTCISOWeekYear = {exports: {}};
+
+var getUTCISOWeekYear = {exports: {}};
+
+getUTCISOWeekYear.exports;
 
 (function (module, exports) {
 
@@ -4187,8 +4167,12 @@ var getUTCISOWeekYear = {
 	    return year - 1;
 	  }
 	}
-	module.exports = exports.default;
-} (getUTCISOWeekYear, getUTCISOWeekYearExports));
+	module.exports = exports.default; 
+} (getUTCISOWeekYear, getUTCISOWeekYear.exports));
+
+var getUTCISOWeekYearExports = getUTCISOWeekYear.exports;
+
+startOfUTCISOWeekYear.exports;
 
 (function (module, exports) {
 
@@ -4209,8 +4193,12 @@ var getUTCISOWeekYear = {
 	  var date = (0, _index2.default)(fourthOfJanuary);
 	  return date;
 	}
-	module.exports = exports.default;
-} (startOfUTCISOWeekYear, startOfUTCISOWeekYearExports));
+	module.exports = exports.default; 
+} (startOfUTCISOWeekYear, startOfUTCISOWeekYear.exports));
+
+var startOfUTCISOWeekYearExports = startOfUTCISOWeekYear.exports;
+
+getUTCISOWeek.exports;
 
 (function (module, exports) {
 
@@ -4234,20 +4222,14 @@ var getUTCISOWeekYear = {
 	  // (e.g. it's different in the week of the daylight saving time clock shift)
 	  return Math.round(diff / MILLISECONDS_IN_WEEK) + 1;
 	}
-	module.exports = exports.default;
-} (getUTCISOWeek, getUTCISOWeekExports));
+	module.exports = exports.default; 
+} (getUTCISOWeek, getUTCISOWeek.exports));
 
-var getUTCWeekExports = {};
-var getUTCWeek = {
-  get exports(){ return getUTCWeekExports; },
-  set exports(v){ getUTCWeekExports = v; },
-};
+var getUTCISOWeekExports = getUTCISOWeek.exports;
 
-var startOfUTCWeekExports = {};
-var startOfUTCWeek = {
-  get exports(){ return startOfUTCWeekExports; },
-  set exports(v){ startOfUTCWeekExports = v; },
-};
+var getUTCWeek = {exports: {}};
+
+var startOfUTCWeek = {exports: {}};
 
 var defaultOptions$1 = {};
 
@@ -4263,6 +4245,8 @@ function getDefaultOptions() {
 function setDefaultOptions(newOptions) {
   defaultOptions = newOptions;
 }
+
+startOfUTCWeek.exports;
 
 (function (module, exports) {
 
@@ -4292,20 +4276,16 @@ function setDefaultOptions(newOptions) {
 	  date.setUTCHours(0, 0, 0, 0);
 	  return date;
 	}
-	module.exports = exports.default;
-} (startOfUTCWeek, startOfUTCWeekExports));
+	module.exports = exports.default; 
+} (startOfUTCWeek, startOfUTCWeek.exports));
 
-var startOfUTCWeekYearExports = {};
-var startOfUTCWeekYear = {
-  get exports(){ return startOfUTCWeekYearExports; },
-  set exports(v){ startOfUTCWeekYearExports = v; },
-};
+var startOfUTCWeekExports = startOfUTCWeek.exports;
 
-var getUTCWeekYearExports = {};
-var getUTCWeekYear = {
-  get exports(){ return getUTCWeekYearExports; },
-  set exports(v){ getUTCWeekYearExports = v; },
-};
+var startOfUTCWeekYear = {exports: {}};
+
+var getUTCWeekYear = {exports: {}};
+
+getUTCWeekYear.exports;
 
 (function (module, exports) {
 
@@ -4347,8 +4327,12 @@ var getUTCWeekYear = {
 	    return year - 1;
 	  }
 	}
-	module.exports = exports.default;
-} (getUTCWeekYear, getUTCWeekYearExports));
+	module.exports = exports.default; 
+} (getUTCWeekYear, getUTCWeekYear.exports));
+
+var getUTCWeekYearExports = getUTCWeekYear.exports;
+
+startOfUTCWeekYear.exports;
 
 (function (module, exports) {
 
@@ -4374,8 +4358,12 @@ var getUTCWeekYear = {
 	  var date = (0, _index3.default)(firstWeek, options);
 	  return date;
 	}
-	module.exports = exports.default;
-} (startOfUTCWeekYear, startOfUTCWeekYearExports));
+	module.exports = exports.default; 
+} (startOfUTCWeekYear, startOfUTCWeekYear.exports));
+
+var startOfUTCWeekYearExports = startOfUTCWeekYear.exports;
+
+getUTCWeek.exports;
 
 (function (module, exports) {
 
@@ -4399,14 +4387,14 @@ var getUTCWeekYear = {
 	  // (e.g. it's different in the week of the daylight saving time clock shift)
 	  return Math.round(diff / MILLISECONDS_IN_WEEK) + 1;
 	}
-	module.exports = exports.default;
-} (getUTCWeek, getUTCWeekExports));
+	module.exports = exports.default; 
+} (getUTCWeek, getUTCWeek.exports));
 
-var addLeadingZerosExports = {};
-var addLeadingZeros = {
-  get exports(){ return addLeadingZerosExports; },
-  set exports(v){ addLeadingZerosExports = v; },
-};
+var getUTCWeekExports = getUTCWeek.exports;
+
+var addLeadingZeros = {exports: {}};
+
+addLeadingZeros.exports;
 
 (function (module, exports) {
 
@@ -4422,14 +4410,14 @@ var addLeadingZeros = {
 	  }
 	  return sign + output;
 	}
-	module.exports = exports.default;
-} (addLeadingZeros, addLeadingZerosExports));
+	module.exports = exports.default; 
+} (addLeadingZeros, addLeadingZeros.exports));
 
-var lightFormattersExports = {};
-var lightFormatters = {
-  get exports(){ return lightFormattersExports; },
-  set exports(v){ lightFormattersExports = v; },
-};
+var addLeadingZerosExports = addLeadingZeros.exports;
+
+var lightFormatters = {exports: {}};
+
+lightFormatters.exports;
 
 (function (module, exports) {
 
@@ -4520,8 +4508,12 @@ var lightFormatters = {
 	};
 	var _default = formatters;
 	exports.default = _default;
-	module.exports = exports.default;
-} (lightFormatters, lightFormattersExports));
+	module.exports = exports.default; 
+} (lightFormatters, lightFormatters.exports));
+
+var lightFormattersExports = lightFormatters.exports;
+
+formatters$1.exports;
 
 (function (module, exports) {
 
@@ -5303,14 +5295,14 @@ var lightFormatters = {
 	}
 	var _default = formatters;
 	exports.default = _default;
-	module.exports = exports.default;
-} (formatters$1, formattersExports$1));
+	module.exports = exports.default; 
+} (formatters$1, formatters$1.exports));
 
-var longFormattersExports = {};
-var longFormatters = {
-  get exports(){ return longFormattersExports; },
-  set exports(v){ longFormattersExports = v; },
-};
+var formattersExports$1 = formatters$1.exports;
+
+var longFormatters = {exports: {}};
+
+longFormatters.exports;
 
 (function (module, exports) {
 
@@ -5399,14 +5391,14 @@ var longFormatters = {
 	};
 	var _default = longFormatters;
 	exports.default = _default;
-	module.exports = exports.default;
-} (longFormatters, longFormattersExports));
+	module.exports = exports.default; 
+} (longFormatters, longFormatters.exports));
 
-var getTimezoneOffsetInMillisecondsExports = {};
-var getTimezoneOffsetInMilliseconds = {
-  get exports(){ return getTimezoneOffsetInMillisecondsExports; },
-  set exports(v){ getTimezoneOffsetInMillisecondsExports = v; },
-};
+var longFormattersExports = longFormatters.exports;
+
+var getTimezoneOffsetInMilliseconds = {exports: {}};
+
+getTimezoneOffsetInMilliseconds.exports;
 
 (function (module, exports) {
 
@@ -5430,8 +5422,10 @@ var getTimezoneOffsetInMilliseconds = {
 	  utcDate.setUTCFullYear(date.getFullYear());
 	  return date.getTime() - utcDate.getTime();
 	}
-	module.exports = exports.default;
-} (getTimezoneOffsetInMilliseconds, getTimezoneOffsetInMillisecondsExports));
+	module.exports = exports.default; 
+} (getTimezoneOffsetInMilliseconds, getTimezoneOffsetInMilliseconds.exports));
+
+var getTimezoneOffsetInMillisecondsExports = getTimezoneOffsetInMilliseconds.exports;
 
 var protectedTokens = {};
 
@@ -5461,23 +5455,13 @@ function throwProtectedError(token, format, input) {
   }
 }
 
-var defaultLocaleExports = {};
-var defaultLocale = {
-  get exports(){ return defaultLocaleExports; },
-  set exports(v){ defaultLocaleExports = v; },
-};
+var defaultLocale = {exports: {}};
 
-var enUSExports = {};
-var enUS = {
-  get exports(){ return enUSExports; },
-  set exports(v){ enUSExports = v; },
-};
+var enUS = {exports: {}};
 
-var formatDistanceExports = {};
-var formatDistance = {
-  get exports(){ return formatDistanceExports; },
-  set exports(v){ formatDistanceExports = v; },
-};
+var formatDistance = {exports: {}};
+
+formatDistance.exports;
 
 (function (module, exports) {
 
@@ -5569,20 +5553,16 @@ var formatDistance = {
 	};
 	var _default = formatDistance;
 	exports.default = _default;
-	module.exports = exports.default;
-} (formatDistance, formatDistanceExports));
+	module.exports = exports.default; 
+} (formatDistance, formatDistance.exports));
 
-var formatLongExports = {};
-var formatLong = {
-  get exports(){ return formatLongExports; },
-  set exports(v){ formatLongExports = v; },
-};
+var formatDistanceExports = formatDistance.exports;
 
-var buildFormatLongFnExports = {};
-var buildFormatLongFn = {
-  get exports(){ return buildFormatLongFnExports; },
-  set exports(v){ buildFormatLongFnExports = v; },
-};
+var formatLong = {exports: {}};
+
+var buildFormatLongFn = {exports: {}};
+
+buildFormatLongFn.exports;
 
 (function (module, exports) {
 
@@ -5599,8 +5579,12 @@ var buildFormatLongFn = {
 	    return format;
 	  };
 	}
-	module.exports = exports.default;
-} (buildFormatLongFn, buildFormatLongFnExports));
+	module.exports = exports.default; 
+} (buildFormatLongFn, buildFormatLongFn.exports));
+
+var buildFormatLongFnExports = buildFormatLongFn.exports;
+
+formatLong.exports;
 
 (function (module, exports) {
 
@@ -5644,14 +5628,14 @@ var buildFormatLongFn = {
 	};
 	var _default = formatLong;
 	exports.default = _default;
-	module.exports = exports.default;
-} (formatLong, formatLongExports));
+	module.exports = exports.default; 
+} (formatLong, formatLong.exports));
 
-var formatRelativeExports = {};
-var formatRelative = {
-  get exports(){ return formatRelativeExports; },
-  set exports(v){ formatRelativeExports = v; },
-};
+var formatLongExports = formatLong.exports;
+
+var formatRelative = {exports: {}};
+
+formatRelative.exports;
 
 (function (module, exports) {
 
@@ -5672,20 +5656,16 @@ var formatRelative = {
 	};
 	var _default = formatRelative;
 	exports.default = _default;
-	module.exports = exports.default;
-} (formatRelative, formatRelativeExports));
+	module.exports = exports.default; 
+} (formatRelative, formatRelative.exports));
 
-var localizeExports = {};
-var localize = {
-  get exports(){ return localizeExports; },
-  set exports(v){ localizeExports = v; },
-};
+var formatRelativeExports = formatRelative.exports;
 
-var buildLocalizeFnExports = {};
-var buildLocalizeFn = {
-  get exports(){ return buildLocalizeFnExports; },
-  set exports(v){ buildLocalizeFnExports = v; },
-};
+var localize = {exports: {}};
+
+var buildLocalizeFn = {exports: {}};
+
+buildLocalizeFn.exports;
 
 (function (module, exports) {
 
@@ -5711,8 +5691,12 @@ var buildLocalizeFn = {
 	    return valuesArray[index];
 	  };
 	}
-	module.exports = exports.default;
-} (buildLocalizeFn, buildLocalizeFnExports));
+	module.exports = exports.default; 
+} (buildLocalizeFn, buildLocalizeFn.exports));
+
+var buildLocalizeFnExports = buildLocalizeFn.exports;
+
+localize.exports;
 
 (function (module, exports) {
 
@@ -5865,20 +5849,16 @@ var buildLocalizeFn = {
 	};
 	var _default = localize;
 	exports.default = _default;
-	module.exports = exports.default;
-} (localize, localizeExports));
+	module.exports = exports.default; 
+} (localize, localize.exports));
 
-var matchExports = {};
-var match = {
-  get exports(){ return matchExports; },
-  set exports(v){ matchExports = v; },
-};
+var localizeExports = localize.exports;
 
-var buildMatchFnExports = {};
-var buildMatchFn = {
-  get exports(){ return buildMatchFnExports; },
-  set exports(v){ buildMatchFnExports = v; },
-};
+var match = {exports: {}};
+
+var buildMatchFn = {exports: {}};
+
+buildMatchFn.exports;
 
 (function (module, exports) {
 
@@ -5928,14 +5908,14 @@ var buildMatchFn = {
 	  }
 	  return undefined;
 	}
-	module.exports = exports.default;
-} (buildMatchFn, buildMatchFnExports));
+	module.exports = exports.default; 
+} (buildMatchFn, buildMatchFn.exports));
 
-var buildMatchPatternFnExports = {};
-var buildMatchPatternFn = {
-  get exports(){ return buildMatchPatternFnExports; },
-  set exports(v){ buildMatchPatternFnExports = v; },
-};
+var buildMatchFnExports = buildMatchFn.exports;
+
+var buildMatchPatternFn = {exports: {}};
+
+buildMatchPatternFn.exports;
 
 (function (module, exports) {
 
@@ -5960,8 +5940,12 @@ var buildMatchPatternFn = {
 	    };
 	  };
 	}
-	module.exports = exports.default;
-} (buildMatchPatternFn, buildMatchPatternFnExports));
+	module.exports = exports.default; 
+} (buildMatchPatternFn, buildMatchPatternFn.exports));
+
+var buildMatchPatternFnExports = buildMatchPatternFn.exports;
+
+match.exports;
 
 (function (module, exports) {
 
@@ -6069,8 +6053,12 @@ var buildMatchPatternFn = {
 	};
 	var _default = match;
 	exports.default = _default;
-	module.exports = exports.default;
-} (match, matchExports));
+	module.exports = exports.default; 
+} (match, match.exports));
+
+var matchExports = match.exports;
+
+enUS.exports;
 
 (function (module, exports) {
 
@@ -6107,8 +6095,12 @@ var buildMatchPatternFn = {
 	};
 	var _default = locale;
 	exports.default = _default;
-	module.exports = exports.default;
-} (enUS, enUSExports));
+	module.exports = exports.default; 
+} (enUS, enUS.exports));
+
+var enUSExports = enUS.exports;
+
+defaultLocale.exports;
 
 (function (module, exports) {
 
@@ -6120,8 +6112,12 @@ var buildMatchPatternFn = {
 	var _index = _interopRequireDefault(enUSExports);
 	var _default = _index.default;
 	exports.default = _default;
-	module.exports = exports.default;
-} (defaultLocale, defaultLocaleExports));
+	module.exports = exports.default; 
+} (defaultLocale, defaultLocale.exports));
+
+var defaultLocaleExports = defaultLocale.exports;
+
+format.exports;
 
 (function (module, exports) {
 
@@ -6533,20 +6529,16 @@ var buildMatchPatternFn = {
 	  }
 	  return matched[1].replace(doubleQuoteRegExp, "'");
 	}
-	module.exports = exports.default;
-} (format, formatExports));
+	module.exports = exports.default; 
+} (format, format.exports));
 
-var formattersExports = {};
-var formatters = {
-  get exports(){ return formattersExports; },
-  set exports(v){ formattersExports = v; },
-};
+var formatExports$1 = format.exports;
 
-var tzIntlTimeZoneNameExports = {};
-var tzIntlTimeZoneName = {
-  get exports(){ return tzIntlTimeZoneNameExports; },
-  set exports(v){ tzIntlTimeZoneNameExports = v; },
-};
+var formatters = {exports: {}};
+
+var tzIntlTimeZoneName = {exports: {}};
+
+tzIntlTimeZoneName.exports;
 
 (function (module, exports) {
 
@@ -6594,20 +6586,16 @@ var tzIntlTimeZoneName = {
 	  });
 	}
 
-	module.exports = exports.default;
-} (tzIntlTimeZoneName, tzIntlTimeZoneNameExports));
+	module.exports = exports.default; 
+} (tzIntlTimeZoneName, tzIntlTimeZoneName.exports));
 
-var tzParseTimezoneExports = {};
-var tzParseTimezone = {
-  get exports(){ return tzParseTimezoneExports; },
-  set exports(v){ tzParseTimezoneExports = v; },
-};
+var tzIntlTimeZoneNameExports = tzIntlTimeZoneName.exports;
 
-var tzTokenizeDateExports = {};
-var tzTokenizeDate = {
-  get exports(){ return tzTokenizeDateExports; },
-  set exports(v){ tzTokenizeDateExports = v; },
-};
+var tzParseTimezone = {exports: {}};
+
+var tzTokenizeDate = {exports: {}};
+
+tzTokenizeDate.exports;
 
 (function (module, exports) {
 
@@ -6708,14 +6696,14 @@ var tzTokenizeDate = {
 	  return dtfCache[timeZone];
 	}
 
-	module.exports = exports.default;
-} (tzTokenizeDate, tzTokenizeDateExports));
+	module.exports = exports.default; 
+} (tzTokenizeDate, tzTokenizeDate.exports));
 
-var newDateUTCExports = {};
-var newDateUTC = {
-  get exports(){ return newDateUTCExports; },
-  set exports(v){ newDateUTCExports = v; },
-};
+var tzTokenizeDateExports = tzTokenizeDate.exports;
+
+var newDateUTC = {exports: {}};
+
+newDateUTC.exports;
 
 (function (module, exports) {
 
@@ -6738,8 +6726,12 @@ var newDateUTC = {
 	  return utcDate;
 	}
 
-	module.exports = exports.default;
-} (newDateUTC, newDateUTCExports));
+	module.exports = exports.default; 
+} (newDateUTC, newDateUTC.exports));
+
+var newDateUTCExports = newDateUTC.exports;
+
+tzParseTimezone.exports;
 
 (function (module, exports) {
 
@@ -6877,8 +6869,12 @@ var newDateUTC = {
 	  }
 	}
 
-	module.exports = exports.default;
-} (tzParseTimezone, tzParseTimezoneExports));
+	module.exports = exports.default; 
+} (tzParseTimezone, tzParseTimezone.exports));
+
+var tzParseTimezoneExports = tzParseTimezone.exports;
+
+formatters.exports;
 
 (function (module, exports) {
 
@@ -7044,20 +7040,16 @@ var newDateUTC = {
 
 	var _default = formatters;
 	exports.default = _default;
-	module.exports = exports.default;
-} (formatters, formattersExports));
+	module.exports = exports.default; 
+} (formatters, formatters.exports));
 
-var toDateExports = {};
-var toDate$1 = {
-  get exports(){ return toDateExports; },
-  set exports(v){ toDateExports = v; },
-};
+var formattersExports = formatters.exports;
 
-var tzPatternExports = {};
-var tzPattern = {
-  get exports(){ return tzPatternExports; },
-  set exports(v){ tzPatternExports = v; },
-};
+var toDate$1 = {exports: {}};
+
+var tzPattern = {exports: {}};
+
+tzPattern.exports;
 
 (function (module, exports) {
 
@@ -7070,8 +7062,12 @@ var tzPattern = {
 	var tzPattern = /(Z|[+-]\d{2}(?::?\d{2})?| UTC| [a-zA-Z]+\/[a-zA-Z_]+(?:\/[a-zA-Z_]+)?)$/;
 	var _default = tzPattern;
 	exports.default = _default;
-	module.exports = exports.default;
-} (tzPattern, tzPatternExports));
+	module.exports = exports.default; 
+} (tzPattern, tzPattern.exports));
+
+var tzPatternExports = tzPattern.exports;
+
+toDate$1.exports;
 
 (function (module, exports) {
 
@@ -7528,8 +7524,12 @@ var tzPattern = {
 	  return true;
 	}
 
-	module.exports = exports.default;
-} (toDate$1, toDateExports));
+	module.exports = exports.default; 
+} (toDate$1, toDate$1.exports));
+
+var toDateExports = toDate$1.exports;
+
+format$1.exports;
 
 (function (module, exports) {
 
@@ -7538,7 +7538,7 @@ var tzPattern = {
 	});
 	exports.default = format;
 
-	var _index = _interopRequireDefault(formatExports);
+	var _index = _interopRequireDefault(formatExports$1);
 
 	var _index2 = _interopRequireDefault(formattersExports);
 
@@ -7884,26 +7884,18 @@ var tzPattern = {
 	  return (0, _index.default)(dirtyDate, formatStr, options);
 	}
 
-	module.exports = exports.default;
-} (format$1, formatExports$1));
+	module.exports = exports.default; 
+} (format$1, format$1.exports));
 
-var formatInTimeZoneExports = {};
-var formatInTimeZone = {
-  get exports(){ return formatInTimeZoneExports; },
-  set exports(v){ formatInTimeZoneExports = v; },
-};
+var formatExports = format$1.exports;
 
-var cloneObjectExports = {};
-var cloneObject = {
-  get exports(){ return cloneObjectExports; },
-  set exports(v){ cloneObjectExports = v; },
-};
+var formatInTimeZone = {exports: {}};
 
-var assignExports = {};
-var assign = {
-  get exports(){ return assignExports; },
-  set exports(v){ assignExports = v; },
-};
+var cloneObject = {exports: {}};
+
+var assign = {exports: {}};
+
+assign.exports;
 
 (function (module, exports) {
 
@@ -7922,8 +7914,12 @@ var assign = {
 	  }
 	  return target;
 	}
-	module.exports = exports.default;
-} (assign, assignExports));
+	module.exports = exports.default; 
+} (assign, assign.exports));
+
+var assignExports = assign.exports;
+
+cloneObject.exports;
 
 (function (module, exports) {
 
@@ -7936,14 +7932,14 @@ var assign = {
 	function cloneObject(object) {
 	  return (0, _index.default)({}, object);
 	}
-	module.exports = exports.default;
-} (cloneObject, cloneObjectExports));
+	module.exports = exports.default; 
+} (cloneObject, cloneObject.exports));
 
-var utcToZonedTimeExports = {};
-var utcToZonedTime = {
-  get exports(){ return utcToZonedTimeExports; },
-  set exports(v){ utcToZonedTimeExports = v; },
-};
+var cloneObjectExports = cloneObject.exports;
+
+var utcToZonedTime = {exports: {}};
+
+utcToZonedTime.exports;
 
 (function (module, exports) {
 
@@ -7992,8 +7988,12 @@ var utcToZonedTime = {
 	  return resultDate;
 	}
 
-	module.exports = exports.default;
-} (utcToZonedTime, utcToZonedTimeExports));
+	module.exports = exports.default; 
+} (utcToZonedTime, utcToZonedTime.exports));
+
+var utcToZonedTimeExports = utcToZonedTime.exports;
+
+formatInTimeZone.exports;
 
 (function (module, exports) {
 
@@ -8004,7 +8004,7 @@ var utcToZonedTime = {
 
 	var _index = _interopRequireDefault(cloneObjectExports);
 
-	var _index2 = _interopRequireDefault(formatExports$1);
+	var _index2 = _interopRequireDefault(formatExports);
 
 	var _index3 = _interopRequireDefault(utcToZonedTimeExports);
 
@@ -8038,14 +8038,14 @@ var utcToZonedTime = {
 	  return (0, _index2.default)((0, _index3.default)(date, timeZone), formatStr, extendedOptions);
 	}
 
-	module.exports = exports.default;
-} (formatInTimeZone, formatInTimeZoneExports));
+	module.exports = exports.default; 
+} (formatInTimeZone, formatInTimeZone.exports));
 
-var getTimezoneOffsetExports = {};
-var getTimezoneOffset = {
-  get exports(){ return getTimezoneOffsetExports; },
-  set exports(v){ getTimezoneOffsetExports = v; },
-};
+var formatInTimeZoneExports = formatInTimeZone.exports;
+
+var getTimezoneOffset = {exports: {}};
+
+getTimezoneOffset.exports;
 
 (function (module, exports) {
 
@@ -8089,14 +8089,14 @@ var getTimezoneOffset = {
 	  return -(0, _index.default)(timeZone, date);
 	}
 
-	module.exports = exports.default;
-} (getTimezoneOffset, getTimezoneOffsetExports));
+	module.exports = exports.default; 
+} (getTimezoneOffset, getTimezoneOffset.exports));
 
-var zonedTimeToUtcExports = {};
-var zonedTimeToUtc = {
-  get exports(){ return zonedTimeToUtcExports; },
-  set exports(v){ zonedTimeToUtcExports = v; },
-};
+var getTimezoneOffsetExports = getTimezoneOffset.exports;
+
+var zonedTimeToUtc = {exports: {}};
+
+zonedTimeToUtc.exports;
 
 (function (module, exports) {
 
@@ -8154,12 +8154,14 @@ var zonedTimeToUtc = {
 	  return new Date(utc + offsetMilliseconds);
 	}
 
-	module.exports = exports.default;
-} (zonedTimeToUtc, zonedTimeToUtcExports));
+	module.exports = exports.default; 
+} (zonedTimeToUtc, zonedTimeToUtc.exports));
+
+var zonedTimeToUtcExports = zonedTimeToUtc.exports;
 
 // This file is generated automatically by `scripts/build/indices.js`. Please, don't change it.
 var dateFnsTz = {
-  format: formatExports$1,
+  format: formatExports,
   formatInTimeZone: formatInTimeZoneExports,
   getTimezoneOffset: getTimezoneOffsetExports,
   toDate: toDateExports,
@@ -8174,14 +8176,14 @@ var MessageType;
 })(MessageType || (MessageType = {}));
 var MessageType$1 = MessageType;
 
-function _typeof(obj) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
 }
 
 function toInteger(dirtyNumber) {
@@ -8791,11 +8793,7 @@ var contactComponent = () => {
     };
 };
 
-var markExports = {};
-var mark = {
-  get exports(){ return markExports; },
-  set exports(v){ markExports = v; },
-};
+var mark = {exports: {}};
 
 /*!***************************************************
 * mark.js v8.11.1
@@ -8803,6 +8801,7 @@ var mark = {
 * Copyright (c) 2014–2018, Julian Kühnel
 * Released under the MIT license https://git.io/vwTVl
 *****************************************************/
+mark.exports;
 
 (function (module, exports) {
 	(function (global, factory) {
@@ -9862,10 +9861,11 @@ var mark = {
 
 	return Mark;
 
-	})));
-} (mark));
+	}))); 
+} (mark, mark.exports));
 
-var Mark = markExports;
+var markExports = mark.exports;
+var Mark = /*@__PURE__*/getDefaultExportFromCjs(markExports);
 
 var privateMessageComponent = () => {
     const container = document.querySelector('.basement-private-messages');

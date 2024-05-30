@@ -10,7 +10,9 @@
     x-transition:enter.duration.500ms=""
 >
     <x-basement::organisms.header class="bm-z-30">
-        <x-slot:title class="bm-relative bm-flex bm-flex-row bm-space-x-2">
+        <x-slot:title
+            class="bm-relative bm-flex bm-flex-row bm-space-x-2"
+        >
             <p
                 class="bm-max-w-[90%] bm-overflow-hidden bm-text-ellipsis bm-whitespace-nowrap"
                 x-text="receiver?.name"
@@ -278,7 +280,9 @@
 
             <x-basement::molecules.form-group class="bm-col-span-7">
                 <x-slot:title>Viesti</x-slot:title>
-                <x-slot:icon x-show="isLoadingSentMessage === true">
+                <x-slot:icon
+                    x-show="isLoadingSentMessage === true"
+                >
                     <x-basement::atoms.icons.fas-circle-notch
                         class="bm-ml-2 bm-h-[0.9rem] bm-animate-spin bm-text-blue-500"
                     />
