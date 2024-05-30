@@ -92,5 +92,5 @@ export interface PrivateMessageComponent {
   setUnreadMessagesMarker(): void
   updateReceiver(event: CustomEvent<UpdateReceiverEvent>): void
   watchMessages(newValue: PrivateMessageData[], oldValue: PrivateMessageData[]): void
-  setMessageRows(value: string): void
+  setMessageRows(value: string): number
 }

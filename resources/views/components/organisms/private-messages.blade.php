@@ -308,7 +308,7 @@
                     required=""
                     placeholder="Viesti"
                     maxlength="5000"
-                    :rows="calculateRows(newMessageValue)"
+                    :rows="setMessageRows(newMessageValue)"
                 ></x-basement::atoms.textarea>
             </x-basement::molecules.form-group>
 
