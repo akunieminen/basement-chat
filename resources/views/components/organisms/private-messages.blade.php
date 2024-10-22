@@ -294,7 +294,7 @@
                     aria-autocomplete="none"
                     aria-required="true"
                     x-bind:disabled="isLoadingSentMessage === true"
-                    x-bind:class="isLoadingSentMessage === true? 'bm-pl-9' : ''"
+                    x-bind:class="isLoadingSentMessage === true ? 'bm-pl-9' : ''"
                     x-model="newMessageValue"
                     x-on:keydown.throttle.1000ms="currentlyTyping"
                     x-on:keydown.enter.prevent="

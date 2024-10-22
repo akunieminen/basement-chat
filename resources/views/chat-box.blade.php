@@ -14,9 +14,12 @@
     >
 
         <button
-            class="basement-chat-box__open-button bm-h-full bm-w-full bm-rounded-full bm-border bm-bg-white bm-text-blue-500 bm-shadow-lg bm-transition bm-duration-500 hover:bm-bg-blue-500 hover:bm-text-white"
+            class="basement-chat-box__open-button bm-h-full bm-w-full bm-rounded-full bm-border bm-text-blue-500 bm-shadow-lg bm-transition bm-duration-500 hover:bm-bg-blue-500 hover:bm-text-white"
             x-on:click="isMinimized = false"
-            x-bind:class="isMinimized === true ? '' : 'bm-hidden'"
+            x-bind:class="[
+                isMinimized === true ? '' : 'bm-hidden',
+                totalUnreadMessages > 0 ? 'bm-bg-red-500' : 'bm-bg-white'
+            ]"
             x-bind:data-title="totalUnreadMessages === 0 ? 'Katso viestit' : `Sinulla on ${totalUnreadMessages} uutta viestiä`"
         >
             <template x-if="totalUnreadMessages === 0">
