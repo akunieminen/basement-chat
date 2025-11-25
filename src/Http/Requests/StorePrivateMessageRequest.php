@@ -25,7 +25,7 @@ class StorePrivateMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => ['required', 'max:255', 'string'],
+            'value' => ['required', 'max:5000', 'string'],
         ];
     }
 }
