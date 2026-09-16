@@ -53,18 +53,24 @@ interface Basement
     public static function newPrivateMessageModel(): PrivateMessage;
 
     /**
-     * Register a class / callback that should be used to get all contacts.
-     *
-     * @param  class-string<\BasementChat\Basement\Contracts\AllContacts>   $class
+     * @param class-string<\BasementChat\Basement\Contracts\AllContacts> $class
      */
     public static function allContactsUsing(string $class): void;
 
     /**
-     * Register a class / callback that should be used to get mark private messages as read.
-     *
-     * @param  class-string<\BasementChat\Basement\Contracts\MarkPrivatesMessagesAsRead>   $class
+     * @param class-string<\BasementChat\Basement\Contracts\AllPrivateMessages> $class
+     */
+    public static function allPrivateMessagesUsing(string $class): void;
+
+    /**
+     * @param class-string<\BasementChat\Basement\Contracts\MarkPrivatesMessagesAsRead> $class
      */
     public static function markPrivateMessagesAsReadUsing(string $class): void;
+
+    /**
+     * @param class-string<\BasementChat\Basement\Contracts\SendPrivateMessage> $class
+     */
+    public static function sendPrivateMessagesUsing(string $class): void;
 
     /**
      * Get the avatar style from the basement configuration file.
@@ -74,7 +80,7 @@ interface Basement
     /**
      * Get the avatar options from the basement configuration file.
      *
-     * @return array<string,string|int|bool>
+     * @return array<string,int|bool|string|null>
      */
     public static function getAvatarOptions(): array;
 
@@ -86,7 +92,7 @@ interface Basement
     /**
      * Get the Laravel Echo client-side broadcast options from the basement configuration file.
      *
-     * @return array<string,string|int|bool>
+     * @return array<string,string|int|bool|list<string>|null>
      */
     public static function getBroadcastOptions(): array;
 }

@@ -17,31 +17,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Basement implements BasementContract
 {
-    /**
-     * The user model used by the application.
-     */
     protected static mixed $userModel;
 
-    /**
-     * The private message model used by the application.
-     */
     protected static mixed $privateMessageModel;
 
-    /**
-     * Specify the user model used by the application.
-     */
     public static function useUserModel(mixed $class): void
     {
         static::$userModel = $class;
     }
 
     /**
-     * Get the name of the user model used by the application.
-     *
-     * @return class-string<\Illuminate\Foundation\Auth\User>&class-string<\BasementChat\Basement\Contracts\User>
-     *
-     * @throws \TypeError if the given user model is not a subclass of \Illuminate\Foundation\Auth\User
-     *                    or does not implement the \BasementChat\Basement\Contracts\User.
+     * @return class-string<Authenticatable>&class-string<UserContract>
      */
     public static function userModel(): string
     {
@@ -61,29 +47,20 @@ class Basement implements BasementContract
     }
 
     /**
-     * Get a new instance of the user model.
-     *
-     * @return \Illuminate\Foundation\Auth\User&\BasementChat\Basement\Contracts\User
+     * @return Authenticatable&UserContract
      */
     public static function newUserModel(): Authenticatable
     {
         return app(static::userModel());
     }
 
-    /**
-     * Specify the private message model used by the application.
-     */
     public static function usePrivateMessageModel(mixed $class): void
     {
         static::$privateMessageModel = $class;
     }
 
     /**
-     * Get the name of the private message model used by the application.
-     *
-     * @return class-string<\BasementChat\Basement\Models\PrivateMessage>
-     *
-     * @throws \TypeError if the given user model is not a subclass of \BasementChat\Basement\Models\PrivateMessage.
+     * @return class-string<PrivateMessage>
      */
     public static function privateMessageModel(): string
     {
@@ -101,18 +78,13 @@ class Basement implements BasementContract
         return static::$privateMessageModel;
     }
 
-    /**
-     * Get a new instance of the private message model.
-     */
     public static function newPrivateMessageModel(): PrivateMessage
     {
         return app(static::privateMessageModel());
     }
 
     /**
-     * Register a class / callback that should be used to get all contacts.
-     *
-     * @param  class-string<\BasementChat\Basement\Contracts\AllContacts>   $class
+     * @param class-string<AllContacts> $class
      */
     public static function allContactsUsing(string $class): void
     {
@@ -120,9 +92,7 @@ class Basement implements BasementContract
     }
 
     /**
-     * Register a class / callback that should be used to get all private messages.
-     *
-     * @param  class-string<\BasementChat\Basement\Contracts\AllPrivateMessages>   $class
+     * @param class-string<AllPrivateMessages> $class
      */
     public static function allPrivateMessagesUsing(string $class): void
     {
@@ -130,9 +100,7 @@ class Basement implements BasementContract
     }
 
     /**
-     * Register a class / callback that should be used to get mark private messages as read.
-     *
-     * @param  class-string<\BasementChat\Basement\Contracts\MarkPrivatesMessagesAsRead>   $class
+     * @param class-string<MarkPrivatesMessagesAsRead> $class
      */
     public static function markPrivateMessagesAsReadUsing(string $class): void
     {
@@ -140,26 +108,22 @@ class Basement implements BasementContract
     }
 
     /**
-     * Register a class / callback that should be used to send a private message.
-     *
-     * @param  class-string<\BasementChat\Basement\Contracts\SendPrivateMessage>   $class
+     * @param class-string<SendPrivateMessage> $class
      */
     public static function sendPrivateMessagesUsing(string $class): void
     {
         app()->bind(abstract: SendPrivateMessage::class, concrete: $class);
     }
 
-    /**
-     * Get the avatar style from the basement configuration file.
-     */
     public static function getAvatarStyle(): AvatarStyle
     {
-        $style = AvatarStyle::tryFrom(config('basement.avatar.style'));
+        $raw = config('basement.avatar.style');
+        $style = is_string($raw) ? AvatarStyle::tryFrom($raw) : null;
 
-        if ($style instanceof AvatarStyle === false) {
+        if ($style === null) {
             throw new \TypeError(
-                'The given configuration basement.avatar.style should be instanceof '
-                . AvatarStyle::class . ' class.',
+                'The given configuration basement.avatar.style should be a valid value of '
+                . AvatarStyle::class . ' enum.',
             );
         }
 
@@ -167,13 +131,10 @@ class Basement implements BasementContract
     }
 
     /**
-     * Get the avatar options from the basement configuration file.
-     *
      * @return array<string,int|bool|string|null>
      */
     public static function getAvatarOptions(): array
     {
-        /** @var mixed $options */
         $options = config('basement.avatar.options');
 
         if (is_array($options) === false) {
@@ -182,20 +143,20 @@ class Basement implements BasementContract
             );
         }
 
+        /** @var array<string,int|bool|string|null> $options */
+
         return $options;
     }
 
-    /**
-     * Get the chat box widget position from the basement configuration file.
-     */
     public static function getChatBoxWidgetPosition(): ChatBoxPosition
     {
-        $position = ChatBoxPosition::tryFrom(config('basement.chat_box_widget_position'));
+        $raw = config('basement.chat_box_widget_position');
+        $position = is_string($raw) ? ChatBoxPosition::tryFrom($raw) : null;
 
-        if ($position instanceof ChatBoxPosition === false) {
+        if ($position === null) {
             throw new \TypeError(
-                'The given configuration chat_box_widget_position inside config/basement.php should be instanceof '
-                . ChatBoxPosition::class . ' class.',
+                'The given configuration chat_box_widget_position inside config/basement.php should be a valid value of '
+                . ChatBoxPosition::class . ' enum.',
             );
         }
 
@@ -203,13 +164,10 @@ class Basement implements BasementContract
     }
 
     /**
-     * Get the Laravel Echo client-side broadcast options from the basement configuration file.
-     *
-     * @return array<string,string|int|bool>
+     * @return array<string,string|int|bool|list<string>|null>
      */
     public static function getBroadcastOptions(): array
     {
-        /** @var mixed $connections */
         $connections = config('basement.broadcaster.connections');
         $driver = config('basement.broadcaster.default');
 
@@ -223,6 +181,9 @@ class Basement implements BasementContract
             );
         }
 
-        return $connections[$driver];
+        /** @var array<string,string|int|bool|list<string>|null> $options */
+        $options = $connections[$driver];
+
+        return $options;
     }
 }

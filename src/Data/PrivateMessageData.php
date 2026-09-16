@@ -25,16 +25,14 @@ class PrivateMessageData implements Arrayable
     protected \Closure $senderResolver;
 
     /**
-     * Create a new private message data instance.
-     *
      * @param (Authenticatable&\BasementChat\Basement\Contracts\User)|null $receiver
      * @param (Authenticatable&\BasementChat\Basement\Contracts\User)|null $sender
      */
     public function __construct(
-        public int $receiver_id,
-        public int $sender_id,
-        public MessageType $type,
-        public string $value,
+        public readonly int $receiver_id,
+        public readonly int $sender_id,
+        public readonly MessageType $type,
+        public readonly string $value,
         public ?int $id = null,
         public ?Carbon $created_at = null,
         public ?Carbon $read_at = null,
@@ -76,12 +74,9 @@ class PrivateMessageData implements Arrayable
     }
 
     /**
-     * Create data collection from given messages id.
-     *
      * @param array<int> $messagesId
      * @param array<string> $with
-     *
-     * @return \Illuminate\Support\Collection<int,PrivateMessageData>
+     * @return Collection<int,self>
      */
     public static function collectionFromId(array $messagesId, array $with = []): Collection
     {
@@ -102,8 +97,6 @@ class PrivateMessageData implements Arrayable
     }
 
     /**
-     * Get the instance as an array.
-     *
      * @return array<string,mixed>
      */
     public function toArray(): array

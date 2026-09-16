@@ -7,7 +7,6 @@ namespace BasementChat\Basement\Traits;
 use BasementChat\Basement\Contracts\User;
 use BasementChat\Basement\Facades\Basement;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -26,14 +25,9 @@ trait HasPrivateMessages
     public function getAvatarAttribute(): string
     {
         $style = Basement::getAvatarStyle();
-        $options = Basement::getAvatarOptions();
-        $hash = md5($this->getNameAttribute());
+        $query = http_build_query(['seed' => md5($this->getNameAttribute())] + Basement::getAvatarOptions());
 
-        $queryString = collect($options)
-            ->map(static fn (string $option, string $key): string => ("{$key}={$option}"))
-            ->join('&');
-
-        return "https://avatars.dicebear.com/api/{$style->value}/{$hash}.svg?{$queryString}";
+        return "https://api.dicebear.com/9.x/{$style->value}/svg?{$query}";
     }
 
     /**
@@ -47,7 +41,7 @@ trait HasPrivateMessages
     /**
      * Get all private messages that the user receives.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage, $this>
      */
     public function privateMessagesReceived(): HasMany
     {
@@ -59,7 +53,7 @@ trait HasPrivateMessages
     /**
      * Get all private messages sent by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage, $this>
      */
     public function privateMessagesSent(): HasMany
     {
@@ -71,7 +65,7 @@ trait HasPrivateMessages
     /**
      * Get the private message that owns the last private message id.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Model,\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\BasementChat\Basement\Models\PrivateMessage, $this>
      */
     public function lastPrivateMessage(): BelongsTo
     {

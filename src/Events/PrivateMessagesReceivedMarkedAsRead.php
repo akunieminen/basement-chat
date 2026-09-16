@@ -21,7 +21,7 @@ class PrivateMessagesReceivedMarkedAsRead implements ShouldBroadcastNow
     /**
      * Create a new notification instance.
      *
-     * @param Collection<array-key,Collection<array-key,PrivateMessageData>> $messages
+     * @param Collection<array-key,Collection<int,PrivateMessageData>> $messages
      */
     public function __construct(
         protected int $receiverId,

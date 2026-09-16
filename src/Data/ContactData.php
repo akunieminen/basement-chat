@@ -11,21 +11,16 @@ use Illuminate\Contracts\Support\Arrayable;
  */
 class ContactData implements Arrayable
 {
-    /**
-     * Create a new contact data instance.
-     */
     public function __construct(
-        public int $id,
-        public string $name,
-        public string $avatar,
-        public ?PrivateMessageData $last_private_message = null,
-        public int $unread_messages = 0,
+        public readonly int $id,
+        public readonly string $name,
+        public readonly string $avatar,
+        public readonly ?PrivateMessageData $last_private_message = null,
+        public readonly int $unread_messages = 0,
     ) {
     }
 
     /**
-     * Get the instance as an array.
-     *
      * @return array<string,mixed>
      */
     public function toArray(): array

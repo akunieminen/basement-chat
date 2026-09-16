@@ -4,35 +4,23 @@ declare(strict_types=1);
 
 namespace BasementChat\Basement\Enums;
 
-use Illuminate\Support\Str;
-use Spatie\Enum\Enum;
-
-/**
- * @method static self adventurer()
- * @method static self adventurerNeutral()
- * @method static self avataaars()
- * @method static self bigEars()
- * @method static self bigEarsNeutral()
- * @method static self bigSmile()
- * @method static self bottts()
- * @method static self croodles()
- * @method static self croodlesNeutral()
- * @method static self identicon()
- * @method static self initials()
- * @method static self micah()
- * @method static self miniavs()
- * @method static self openPeeps()
- * @method static self personas()
- * @method static self pixelArt()
- * @method static self pixelArtNeutral()
- */
-class AvatarStyle extends Enum
+enum AvatarStyle: string
 {
-    /**
-     * Change enum value when accessed.
-     */
-    protected static function values(): \Closure
-    {
-        return static fn (string $avatar): string => Str::kebab($avatar);
-    }
+    case Adventurer = 'adventurer';
+    case AdventurerNeutral = 'adventurer-neutral';
+    case Avataaars = 'avataaars';
+    case BigEars = 'big-ears';
+    case BigEarsNeutral = 'big-ears-neutral';
+    case BigSmile = 'big-smile';
+    case Bottts = 'bottts';
+    case Croodles = 'croodles';
+    case CroodlesNeutral = 'croodles-neutral';
+    case Identicon = 'identicon';
+    case Initials = 'initials';
+    case Micah = 'micah';
+    case Miniavs = 'miniavs';
+    case OpenPeeps = 'open-peeps';
+    case Personas = 'personas';
+    case PixelArt = 'pixel-art';
+    case PixelArtNeutral = 'pixel-art-neutral';
 }

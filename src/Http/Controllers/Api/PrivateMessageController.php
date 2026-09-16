@@ -34,8 +34,7 @@ class PrivateMessageController extends Controller
         /** @var \Illuminate\Foundation\Auth\User&\BasementChat\Basement\Contracts\User $user */
         $user = Auth::user();
 
-        /** @var string $keyword */
-        $keyword = $request->get('keyword') ?? '';
+        $keyword = $request->string('keyword')->toString();
 
         $messages = $allPrivateMessages->allBetweenTwoUsers(receiver: $user, sender: $contact, keyword: $keyword);
 
@@ -61,7 +60,7 @@ class PrivateMessageController extends Controller
         $message = $sendPrivateMessage->send(new PrivateMessageData(
             receiver_id: (int) $contact->id,
             sender_id: (int) $senderId,
-            type: MessageType::text(),
+            type: MessageType::Text,
             value: $value,
         ));
 

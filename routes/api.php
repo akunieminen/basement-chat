@@ -7,7 +7,7 @@ use BasementChat\Basement\Http\Controllers\Api\CurrentlyTypingController;
 use BasementChat\Basement\Http\Controllers\Api\PrivateMessageController;
 use Illuminate\Support\Facades\Route;
 
-/** @var array $middleware */
+/** @var array<int,string> $middleware */
 $middleware = config('basement.middleware', [
     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
     'throttle:api',

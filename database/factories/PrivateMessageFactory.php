@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace BasementChat\Basement\Database\Factories;
 
 use BasementChat\Basement\Enums\MessageType;
+use BasementChat\Basement\Facades\Basement;
 use BasementChat\Basement\Models\PrivateMessage;
-use BasementChat\Basement\Tests\Fixtures\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -29,16 +29,16 @@ class PrivateMessageFactory extends Factory
      */
     public function definition(): array
     {
-        /** @var \BasementChat\Basement\Tests\Fixtures\Models\User $receiver */
-        $receiver = User::inRandomOrder()->first();
+        /** @var \Illuminate\Foundation\Auth\User $receiver */
+        $receiver = Basement::newUserModel()->inRandomOrder()->firstOrFail();
 
-        /** @var \BasementChat\Basement\Tests\Fixtures\Models\User $sender */
-        $sender = User::inRandomOrder()->first();
+        /** @var \Illuminate\Foundation\Auth\User $sender */
+        $sender = Basement::newUserModel()->inRandomOrder()->firstOrFail();
 
         return [
             'receiver_id' => $receiver->id,
             'sender_id' => $sender->id,
-            'type' => MessageType::text(),
+            'type' => MessageType::Text,
             'value' => fake()->text(50),
             'read_at' => null,
         ];

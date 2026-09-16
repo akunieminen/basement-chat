@@ -14,7 +14,10 @@ use BasementChat\Basement\Contracts\Basement as BasementContract;
 use BasementChat\Basement\Models\PrivateMessage;
 use BasementChat\Basement\Observers\PrivateMessageObserver;
 use BasementChat\Basement\View\Components\ChatBox;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -27,14 +30,11 @@ class BasementServiceProvider extends PackageServiceProvider
             ->name('basement')
             ->hasConfigFile()
             ->hasMigration('create_private_messages_table')
-            ->hasRoutes(['api', 'channels'])
+            ->hasRoute('api')
             ->hasViews()
             ->hasCommand(InstallCommand::class);
     }
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         parent::register();
@@ -42,12 +42,18 @@ class BasementServiceProvider extends PackageServiceProvider
         $this->app->singleton(abstract: BasementContract::class, concrete: static fn (): Basement => new Basement());
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         parent::boot();
+
+        // Channel callbacks live in the BroadcastManager, not the route cache, so they must be
+        // registered unconditionally (loadRoutesFrom() skips them when routes are cached).
+        require __DIR__ . '/../routes/channels.php';
+
+        if (RateLimiter::limiter('api') === null) {
+            RateLimiter::for('api', static fn (Request $request): Limit => Limit::perMinute(60)
+                ->by($request->user()?->getAuthIdentifier() ?: $request->ip()));
+        }
 
         $this->configurePublishableFiles();
         $this->configureModels();
@@ -56,9 +62,6 @@ class BasementServiceProvider extends PackageServiceProvider
         $this->configureBladeComponents();
     }
 
-    /**
-     * Configure the list of publishable files.
-     */
     protected function configurePublishableFiles(): void
     {
         if ($this->app->runningInConsole() === false) {
@@ -72,9 +75,6 @@ class BasementServiceProvider extends PackageServiceProvider
         ], groups: 'basement-assets');
     }
 
-    /**
-     * Configure models used by the package.
-     */
     protected function configureModels(): void
     {
         Basement::useUserModel(config(key: 'basement.user_model', default: User::class));
@@ -83,9 +83,6 @@ class BasementServiceProvider extends PackageServiceProvider
         PrivateMessage::observe(PrivateMessageObserver::class);
     }
 
-    /**
-     * Configure how the application actions are resolved.
-     */
     protected function configureActions(): void
     {
         Basement::allContactsUsing(AllContacts::class);
@@ -94,17 +91,11 @@ class BasementServiceProvider extends PackageServiceProvider
         Basement::sendPrivateMessagesUsing(SendPrivateMessage::class);
     }
 
-    /**
-     * Configure how parameters in the controller application are resolved.
-     */
     protected function configureRouteModelBindings(): void
     {
         Route::bind('contact', static fn (string|int $value) => Basement::newUserModel()->findOrFail($value));
     }
 
-    /**
-     * Register the package blade view components.
-     */
     protected function configureBladeComponents(): void
     {
         Blade::component('basement::chat-box', ChatBox::class);

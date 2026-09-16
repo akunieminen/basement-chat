@@ -27,7 +27,7 @@ return new class () extends Migration {
             $table->unsignedBigInteger('sender_id');
             $table->foreign('receiver_id')->references($primaryKey)->on($tableName);
             $table->foreign('sender_id')->references($primaryKey)->on($tableName);
-            $table->enum('type', [MessageType::document()->value, MessageType::text()->value]);
+            $table->enum('type', [MessageType::Document->value, MessageType::Text->value]);
             $table->text('value');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();

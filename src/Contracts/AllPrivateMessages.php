@@ -15,7 +15,7 @@ interface AllPrivateMessages
      * @param \Illuminate\Foundation\Auth\User&\BasementChat\Basement\Contracts\User $receiver
      * @param \Illuminate\Foundation\Auth\User&\BasementChat\Basement\Contracts\User $sender
      *
-     * @return \Illuminate\Contracts\Pagination\CursorPaginator<\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Contracts\Pagination\CursorPaginator<int,\BasementChat\Basement\Models\PrivateMessage>
      */
     public function allBetweenTwoUsers(
         Authenticatable $receiver,

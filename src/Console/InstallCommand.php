@@ -7,6 +7,10 @@ namespace BasementChat\Basement\Console;
 use BasementChat\Basement\Support\InstallComposerDependency;
 use BasementChat\Basement\Support\InstallNodeDependency;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Process;
+
+use function Illuminate\Support\artisan_binary;
+use function Illuminate\Support\php_binary;
 
 class InstallCommand extends Command
 {
@@ -44,8 +48,8 @@ class InstallCommand extends Command
     protected array $drivers = [
         'pusher',
         'ably',
-        'laravel-websockets',
         'soketi',
+        'reverb',
     ];
 
     /**
@@ -126,10 +130,6 @@ class InstallCommand extends Command
         $installationStatus = match ($driver) {
             'pusher' => $this->composerDependency->install(command: $this, dependencies: ['pusher/pusher-php-server']),
             'ably' => $this->composerDependency->install(command: $this, dependencies: ['ably/ably-php']),
-            'laravel-websockets' => $this->composerDependency->install(command: $this, dependencies: [
-                'beyondcode/laravel-websockets',
-                'pusher/pusher-php-server',
-            ]),
             'soketi' => (function () {
                 $nodeDependencyInstallationStatus = $this->nodeDependency->install(
                     command: $this,
@@ -150,22 +150,16 @@ class InstallCommand extends Command
 
                 return Command::FAILURE;
             })(),
+            'reverb' => $this->composerDependency->install(command: $this, dependencies: ['laravel/reverb']) === Command::SUCCESS
+                // reverb:install lives in the package just required, so run it in a fresh process (as install:broadcasting does)
+                && Process::forever()->run([php_binary(), artisan_binary(), 'reverb:install'], fn (string $type, string $output) => $this->output->write($output))->successful()
+                    ? Command::SUCCESS
+                    : Command::FAILURE,
             default => Command::INVALID,
         };
 
         if ($installationStatus !== Command::SUCCESS) {
             return $installationStatus;
-        }
-
-        if ($driver === 'laravel-websockets') {
-            $this->call(command: 'vendor:publish', arguments: [
-                '--provider' => 'BeyondCode\LaravelWebSockets\WebSocketsServiceProvider',
-                '--tag' => 'config',
-            ]);
-            $this->call(command: 'vendor:publish', arguments: [
-                '--provider' => 'BeyondCode\LaravelWebSockets\WebSocketsServiceProvider',
-                '--tag' => 'migrations',
-            ]);
         }
 
         $this->info("Broadcast driver {$driver} has been installed! Don't forget to configure your application environment.");
@@ -184,8 +178,8 @@ class InstallCommand extends Command
                 '@alpinejs/intersect@^3',
                 'alpinejs@^3',
                 'axios@^1',
-                'laravel-echo@^1',
-                'pusher-js@^7',
+                'laravel-echo@^2',
+                'pusher-js@^8',
             ],
             dev: true
         );

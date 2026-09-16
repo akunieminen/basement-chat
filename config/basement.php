@@ -27,37 +27,47 @@ return [
                 'broadcaster' => 'pusher',
                 'key' => env('PUSHER_APP_KEY'),
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => true,
+                'forceTLS' => true,
             ],
             'ably' => [
                 'broadcaster' => 'pusher',
                 'key' => env('ABLY_PUBLIC_KEY'),
+                'cluster' => 'mt1',
                 'wsHost' => 'realtime-pusher.ably.io',
                 'wsPort' => 443,
-                'disableStats' => true,
-                'encrypted' => true,
+                'enableStats' => false,
+                'forceTLS' => true,
+            ],
+            'reverb' => [
+                'broadcaster' => 'reverb',
+                'key' => env('REVERB_APP_KEY'),
+                'wsHost' => env('REVERB_HOST', '127.0.0.1'),
+                'wsPort' => env('REVERB_PORT', 80),
+                'wssPort' => env('REVERB_PORT', 443),
+                'forceTLS' => (env('REVERB_SCHEME', 'https') === 'https'),
+                'enabledTransports' => ['ws', 'wss'],
             ],
             'laravel-websockets' => [
                 'broadcaster' => 'pusher',
                 'key' => env('PUSHER_APP_KEY'),
+                'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
                 'wsHost' => '127.0.0.1',
                 'wsPort' => 6001,
                 'forceTLS' => false,
-                'disableStats' => true,
+                'enableStats' => false,
             ],
             'soketi' => [
                 'broadcaster' => 'pusher',
                 'key' => env('PUSHER_APP_KEY'),
+                'cluster' => env('PUSHER_APP_CLUSTER', 'mt1'),
                 'wsHost' => env('PUSHER_HOST'),
                 'wsPort' => env('PUSHER_PORT'),
                 'wssPort' => env('PUSHER_PORT'),
                 'forceTLS' => false,
-                'encrypted' => true,
-                'disableStats' => true,
+                'enableStats' => false,
                 'enabledTransports' => ['ws', 'wss'],
             ],
-            'null' => [
-            ],
+            'null' => ['broadcaster' => 'null'],
         ],
     ],
 
@@ -72,7 +82,7 @@ return [
     |
     */
 
-    'chat_box_widget_position' => (string) ChatBoxPosition::bottomRight(),
+    'chat_box_widget_position' => ChatBoxPosition::BottomRight->value,
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +103,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | You can change the avatar's appearance in the contact list according to
-    | the styles available in https://avatars.dicebear.com/. If you have other
+    | the styles available in https://www.dicebear.com/styles/. If you have other
     | avatar preferences (such as the user's real photo uploaded on your site),
     | you can override the "getAvatarAttribute" accessor function in your user
     | model.
@@ -101,9 +111,9 @@ return [
     */
 
     'avatar' => [
-        'style' => (string) AvatarStyle::micah(),
+        'style' => AvatarStyle::Micah->value,
         'options' => [
-            'b' => '%233584e4',
+            'backgroundColor' => '3584e4',
             'size' => 64,
         ],
     ],

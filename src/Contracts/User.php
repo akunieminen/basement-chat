@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BasementChat\Basement\Contracts;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -14,6 +13,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 /**
  * @phpstan-method static Authenticatable&User addSelectLastPrivateMessageId(Authenticatable&User $value)
  * @phpstan-method static Authenticatable&User addSelectUnreadMessages(Authenticatable&User $value)
+ *
+ * @phpstan-require-extends Authenticatable
  *
  * @property string $name
  * @property string $avatar
@@ -35,21 +36,21 @@ interface User
     /**
      * Get all private messages that the user receives.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage, Authenticatable>
      */
     public function privateMessagesReceived(): HasMany;
 
     /**
      * Get all private messages sent by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\BasementChat\Basement\Models\PrivateMessage, Authenticatable>
      */
     public function privateMessagesSent(): HasMany;
 
     /**
      * Get the private message that owns the last private message id.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Model,\BasementChat\Basement\Models\PrivateMessage>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\BasementChat\Basement\Models\PrivateMessage, Authenticatable>
      */
     public function lastPrivateMessage(): BelongsTo;
 
