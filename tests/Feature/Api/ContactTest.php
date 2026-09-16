@@ -10,6 +10,7 @@ use BasementChat\Basement\Tests\TestCase;
 use BasementChat\Basement\Tests\WithPrivateMessages;
 use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class ContactTest extends TestCase
 {
@@ -37,9 +38,7 @@ class ContactTest extends TestCase
         $this->sender = $this->users[1];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeOkIfCanGetAllContacts(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->receiver);
@@ -59,9 +58,7 @@ class ContactTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeRedirectedToLoginPageIfNotAuthenticatedWhenGettingAllContacts(): void
     {
         $response = $this->get('/api/basement/contacts');

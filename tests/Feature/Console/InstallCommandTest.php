@@ -7,6 +7,7 @@ use BasementChat\Basement\Tests\Fixtures\Factories\FakeSymfonyProcessFactory;
 use BasementChat\Basement\Tests\TestCase;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Finder\SplFileInfo;
 
 class InstallCommandTest extends TestCase
@@ -21,9 +22,16 @@ class InstallCommandTest extends TestCase
         $this->app->bind(SymfonyProcessFactory::class, FakeSymfonyProcessFactory::class);
     }
 
-    /**
-     * @test
-     */
+    protected function tearDown(): void
+    {
+        File::deleteDirectory(public_path('vendor/basement'));
+        File::cleanDirectory(database_path('migrations'));
+        File::delete(config_path('basement.php'));
+
+        parent::tearDown();
+    }
+
+    #[Test]
     public function itShouldBeAbleToPublishFilesWhenInstallingApp(): void
     {
         $this
@@ -39,18 +47,12 @@ class InstallCommandTest extends TestCase
         $this->assertFileExists(public_path('vendor/basement/basement.bundle.min.js'));
         $this->assertFileExists(public_path('vendor/basement/basement.bundle.min.js.map'));
 
-        collect(File::files(database_path('migrations')))->some(static fn (SplFileInfo $file): bool => (
-            Str::contains(haystack: $file->getFilename(), needles: 'create_private_messages_table.php')
+        $this->assertTrue(collect(File::files(database_path('migrations')))->some(
+            static fn (SplFileInfo $file): bool => Str::endsWith($file->getFilename(), 'create_private_messages_table.php')
         ));
-
-        File::deleteDirectory(public_path('vendor/basement'));
-        File::cleanDirectory(database_path('migrations'));
-        File::delete(config_path('basement.php'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldFailIfTheGivenCommandIsNotAvailable(): void
     {
         $this
@@ -59,9 +61,7 @@ class InstallCommandTest extends TestCase
             ->assertFailed();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldCallComposerInstallCommandWhenInstallingDriver(): void
     {
         $this
@@ -70,16 +70,14 @@ class InstallCommandTest extends TestCase
             ->expectsChoice(question: 'Please choose the broadcast driver you want to use', answer: 'pusher', answers: [
                 'pusher',
                 'ably',
-                'laravel-websockets',
                 'soketi',
+                'reverb',
             ])
             ->expectsOutputToContain('composer require pusher/pusher-php-server')
             ->expectsOutputToContain('Broadcast driver pusher has been installed!');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldCallNpmInstallCommandWhenInstallingFrontendDeps(): void
     {
         $this
@@ -90,7 +88,9 @@ class InstallCommandTest extends TestCase
                 'yarn',
                 'pnpm',
             ])
-            ->expectsOutputToContain('npm install')
+            ->expectsOutputToContain(
+                'npm install @alpinejs/intersect@^3 alpinejs@^3 axios@^1 laravel-echo@^2 pusher-js@^8 --save-dev'
+            )
             ->expectsOutputToContain('Frontend dependencies has been installed!');
     }
 }

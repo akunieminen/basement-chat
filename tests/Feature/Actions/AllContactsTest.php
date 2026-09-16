@@ -14,6 +14,7 @@ use BasementChat\Basement\Tests\WithPrivateMessages;
 use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Attributes\Test;
 
 class AllContactsTest extends TestCase
 {
@@ -43,9 +44,7 @@ class AllContactsTest extends TestCase
         $this->sender2 = $this->users[2];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToGetAllContacts(): void
     {
         /** @var \BasementChat\Basement\Contracts\AllContacts $allContacts */
@@ -64,9 +63,7 @@ class AllContactsTest extends TestCase
         $this->assertSame(expected: $contact->avatar, actual: $this->receiver->avatar);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldHaveTheLastPrivateMessage(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender1, count: 10);
@@ -88,9 +85,7 @@ class AllContactsTest extends TestCase
         $this->assertSame(expected: $lastMessage->read_at, actual: $contact->last_private_message->read_at);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldHaveTheNumberOfUnreadMessages(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender1, count: 10);
@@ -103,9 +98,7 @@ class AllContactsTest extends TestCase
         $this->assertSame(expected: $contact->unread_messages, actual: 10);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeSortedInDescOrderAtTheTimeTheLastMessageIsReceived(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender1, count: 10);
@@ -122,12 +115,10 @@ class AllContactsTest extends TestCase
         $this->assertSame(expected: $this->receiver->id, actual: $contacts[2]->id);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itAvatarPropertyShouldRepresentTheValueFromTheConfigFile(): void
     {
-        config(['basement.avatar.style' => AvatarStyle::bigEars()]);
+        config(['basement.avatar.style' => AvatarStyle::BigEars->value]);
         config(['basement.avatar.options' => ['size' => 32]]);
 
         /** @var \BasementChat\Basement\Contracts\AllContacts $allContacts */
@@ -136,7 +127,7 @@ class AllContactsTest extends TestCase
         $contact = $this->sameContact(contacts: $allContacts->all($this->sender1), id: $this->receiver->id);
 
         $this->assertSame(
-            expected: 'https://avatars.dicebear.com/api/big-ears/' . md5($contact->name) . '.svg?size=32',
+            expected: 'https://api.dicebear.com/9.x/big-ears/svg?seed=' . md5($contact->name) . '&size=32',
             actual: $contact->avatar,
         );
     }

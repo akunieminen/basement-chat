@@ -5,12 +5,11 @@ namespace BasementChat\Basement\Tests\Unit;
 use BasementChat\Basement\Basement;
 use BasementChat\Basement\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+use PHPUnit\Framework\Attributes\Test;
 
 class BasementTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldThrowTypeErrorWhenUserModelIsInvalid(): void
     {
         $this->expectException(\TypeError::class);
@@ -19,9 +18,7 @@ class BasementTest extends TestCase
         Basement::userModel();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldThrowTypeErrorWhenPrivateMessageModelIsInvalid(): void
     {
         $this->expectException(\TypeError::class);
@@ -30,9 +27,7 @@ class BasementTest extends TestCase
         Basement::privateMessageModel();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldThrowTypeErrorWhenAvatarStyleIsInvalid(): void
     {
         $this->expectException(\TypeError::class);
@@ -42,9 +37,7 @@ class BasementTest extends TestCase
         Basement::getAvatarStyle();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldThrowTypeErrorWhenAvatarOptionsIsInvalid(): void
     {
         $this->expectException(\TypeError::class);
@@ -54,9 +47,7 @@ class BasementTest extends TestCase
         Basement::getAvatarOptions();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldThrowTypeErrorWhenChatBoxWidgetPositionIsInvalid(): void
     {
         $this->expectException(\TypeError::class);
@@ -66,9 +57,7 @@ class BasementTest extends TestCase
         Basement::getChatBoxWidgetPosition();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldThrowTypeErrorWhenBroadcastOptionsIsInvalid(): void
     {
         $this->expectException(\TypeError::class);

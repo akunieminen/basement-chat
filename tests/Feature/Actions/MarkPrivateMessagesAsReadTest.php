@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 
 class MarkPrivateMessagesAsReadTest extends TestCase
 {
@@ -42,9 +43,7 @@ class MarkPrivateMessagesAsReadTest extends TestCase
         $this->sender = $this->users[1];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToMarkPrivateMessagesAsRead(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 10);

@@ -10,6 +10,7 @@ use BasementChat\Basement\Tests\TestCase;
 use BasementChat\Basement\Tests\WithPrivateMessages;
 use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class PrivateMessageTest extends TestCase
 {
@@ -37,9 +38,7 @@ class PrivateMessageTest extends TestCase
         $this->sender = $this->users[1];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeOkIfCanGetAllPrivateMessages(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 15);
@@ -56,9 +55,7 @@ class PrivateMessageTest extends TestCase
         ]));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeRedirectedToLoginPageIfNotAuthenticatedWhenGettingAllPrivateMessages(): void
     {
         $response = $this->get("/api/basement/contacts/{$this->receiver->id}/private-messages");
@@ -66,9 +63,7 @@ class PrivateMessageTest extends TestCase
         $response->assertRedirect('login');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeCreatedIfCanSendAPrivateMessage(): void
     {
         $this->actingAs($this->sender);
@@ -83,9 +78,7 @@ class PrivateMessageTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeUnprocessableIfTheDataProvidedIsIncorrectWhenSendingAPrivateMessage(): void
     {
         $this->actingAs($this->sender);
@@ -98,9 +91,7 @@ class PrivateMessageTest extends TestCase
         $response->assertJsonStructure(['message', 'errors' => ['value']]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeRedirectedToLoginPageIfNotAuthenticatedWhenSendingAPrivateMessage(): void
     {
         $response = $this->post(uri: "/api/basement/contacts/{$this->receiver->id}/private-messages", data: [
@@ -110,9 +101,7 @@ class PrivateMessageTest extends TestCase
         $response->assertRedirect('login');
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeOkIfCanMarkPrivateMessagesAsRead(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 10);
@@ -138,9 +127,7 @@ class PrivateMessageTest extends TestCase
         ]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeUnprocessableIfUpdateMessagesWhenDataEmpty(): void
     {
         $this->actingAs($this->sender);
@@ -153,9 +140,7 @@ class PrivateMessageTest extends TestCase
         $response->assertJsonStructure(['message', 'errors' => ['*']]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldGetResponseStatusCodeUnprocessableIfMarkMessageAsReadWhichIsNotReceived(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 10);

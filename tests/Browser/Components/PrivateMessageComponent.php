@@ -49,7 +49,7 @@ class PrivateMessageComponent extends BaseComponent
     {
         $browser
             ->scrollIntoView('.basement-private-messages__load-more-messages-button')
-            ->assertSee('Load more messages');
+            ->assertSee('Lataa lisää viestejä');
     }
 
     /**

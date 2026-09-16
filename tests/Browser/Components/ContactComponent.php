@@ -49,7 +49,7 @@ class ContactComponent extends BaseComponent
 
             $browser
                 ->waitFor(
-                    selector: "{$selector} > div[data-title=\"{$contact->name} is offline\"]",
+                    selector: "{$selector} > div[data-title=\"{$contact->name} on poissa\"]",
                     seconds: 10,
                 )
                 ->with(selector: $selector, callback: static fn (Browser $container) => $container
@@ -71,7 +71,7 @@ class ContactComponent extends BaseComponent
 
             $browser
                 ->waitFor(
-                    selector: "{$selector} > div[data-title=\"{$contact->name} is online\"]",
+                    selector: "{$selector} > div[data-title=\"{$contact->name} on paikalla\"]",
                     seconds: 10,
                 )
                 ->with(selector: $selector, callback: static fn (Browser $container) => $container
@@ -120,6 +120,6 @@ class ContactComponent extends BaseComponent
      */
     public function waitUntilContactsVisible(Browser $browser): void
     {
-        $browser->waitUntilMissingText(text: 'No contacts found', seconds: 10);
+        $browser->waitUntilMissingText(text: 'Ei kontakteja', seconds: 10);
     }
 }

@@ -14,6 +14,7 @@ use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 
 class PrivateMessageBoxTest extends BrowserTestCase
 {
@@ -40,9 +41,7 @@ class PrivateMessageBoxTest extends BrowserTestCase
         $this->sender = $this->users[1];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToSeeAllPrivateMessages(): void
     {
         $this->addPrivateMessages(receiver: $this->sender, sender: $this->receiver, count: 50, state: new Sequence(
@@ -86,9 +85,7 @@ class PrivateMessageBoxTest extends BrowserTestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToSendAPrivateMessageInRealtime(): void
     {
         $this->browse(function (Browser $browserReceiver, Browser $browserSender): void {
@@ -128,9 +125,7 @@ class PrivateMessageBoxTest extends BrowserTestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToShowTheNumberOfUnreadMessages(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 10);

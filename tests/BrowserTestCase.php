@@ -7,15 +7,15 @@ namespace BasementChat\Basement\Tests;
 use BasementChat\Basement\Tests\Fixtures\Models\User;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
 use Illuminate\Contracts\View\View;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
+use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\Dusk\Options;
 use Orchestra\Testbench\Dusk\TestCase as OrchestraDuskTestCase;
-use Orchestra\Testbench\Http\Middleware\VerifyCsrfToken;
 
+#[WithMigration]
 class BrowserTestCase extends OrchestraDuskTestCase
 {
     /**
@@ -30,8 +30,7 @@ class BrowserTestCase extends OrchestraDuskTestCase
 
         BasementTestCaseEnvironment::setFactories();
         Options::withoutUI();
-        Options::addArgument('--no-sandbox');
-        Options::addArgument('--disable-gpu');
+        Options::noSandbox();
     }
 
     /**
@@ -45,11 +44,12 @@ class BrowserTestCase extends OrchestraDuskTestCase
 
         BasementTestCaseEnvironment::setConfigurations();
 
+        // `testbench package:test` hands BROADCAST_CONNECTION=log to phpunit and phpunit.xml cannot override it
+        // (no force="true"); the browser suite needs the real pusher/soketi path in the test AND the served app.
+        Config::set(key: 'broadcasting.default', value: 'pusher');
         Config::set(key: 'app.key', value: 'base64:IDrlmrVwu65iBhbUpPq3fsv7kybcnfUFZmY1wk+mamE=');
         Config::set(key: 'auth.providers.users.model', value: User::class);
         Config::set(key: 'database.connections.sqlite.database', value: database_path('database.sqlite'));
-        Config::set(key: 'sanctum.middleware.encrypt_cookies', value: EncryptCookies::class);
-        Config::set(key: 'sanctum.middleware.verify_csrf_token', value: VerifyCsrfToken::class);
         Config::set(key: 'view.cache', value: false);
         Config::set(key: 'view.paths', value: [
             resource_path('views'),
@@ -63,7 +63,6 @@ class BrowserTestCase extends OrchestraDuskTestCase
      */
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadLaravelMigrations();
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 

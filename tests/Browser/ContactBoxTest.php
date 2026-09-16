@@ -13,6 +13,7 @@ use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Test;
 
 class ContactBoxTest extends BrowserTestCase
 {
@@ -42,9 +43,7 @@ class ContactBoxTest extends BrowserTestCase
         $this->sender2 = $this->users[2];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToSeeAllContactsWithTheirOnlineStatus(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender1, state: new Sequence([
@@ -77,9 +76,7 @@ class ContactBoxTest extends BrowserTestCase
         });
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToFilterContactsByKeyword(): void
     {
         $this->browse(function (Browser $browser): void {

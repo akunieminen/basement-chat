@@ -9,7 +9,7 @@ use Symfony\Component\Process\Process;
 
 class FakeSymfonyProcess extends Process
 {
-    public function run(callable $callback = null, array $env = []): int
+    public function run(?callable $callback = null, array $env = []): int
     {
         $callback(self::OUT, str_replace(search: '\'', replace: '', subject: $this->getCommandLine()));
 

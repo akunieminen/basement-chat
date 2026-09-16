@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace BasementChat\Basement\Tests;
 
+use Illuminate\Support\Facades\Config;
+use Orchestra\Testbench\Attributes\WithMigration;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
+#[WithMigration]
 class TestCase extends OrchestraTestCase
 {
     /**
@@ -26,6 +29,9 @@ class TestCase extends OrchestraTestCase
     public function getEnvironmentSetUp($app): void
     {
         BasementTestCaseEnvironment::setConfigurations();
+
+        // Feature/Unit suites never need a live websocket server; BrowserTestCase keeps pusher.
+        Config::set(key: 'broadcasting.default', value: 'null');
     }
 
     /**
@@ -33,7 +39,6 @@ class TestCase extends OrchestraTestCase
      */
     protected function defineDatabaseMigrations(): void
     {
-        $this->loadLaravelMigrations();
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 

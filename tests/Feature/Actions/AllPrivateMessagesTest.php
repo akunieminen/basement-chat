@@ -13,6 +13,7 @@ use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 
 class AllPrivateMessagesTest extends TestCase
 {
@@ -39,9 +40,7 @@ class AllPrivateMessagesTest extends TestCase
         $this->sender = $this->users[1];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToGetAllPrivateMessagesBetweenTwoUsers(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 10);
@@ -64,9 +63,7 @@ class AllPrivateMessagesTest extends TestCase
             ));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeCursorPaginated(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 100);
@@ -82,9 +79,7 @@ class AllPrivateMessagesTest extends TestCase
         $this->assertNotNull(actual: $messages->nextPageUrl());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeFilteredByTheGivenKeyword(): void
     {
         $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 30, state: new Sequence(

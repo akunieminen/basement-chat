@@ -16,6 +16,7 @@ use BasementChat\Basement\Tests\WithUsers;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
+use PHPUnit\Framework\Attributes\Test;
 
 class SendPrivateMessageTest extends TestCase
 {
@@ -42,9 +43,7 @@ class SendPrivateMessageTest extends TestCase
         $this->sender = $this->users[1];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeAbleToSendAPrivateMessage(): void
     {
         Event::fake([PrivateMessageSent::class, PrivateMessageReceived::class]);
@@ -92,9 +91,7 @@ class SendPrivateMessageTest extends TestCase
         Event::assertDispatchedTimes(event: PrivateMessageReceived::class, times: 1);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function itShouldBeMarkedAsReadIfSendingAMessageToSelf(): void
     {
         Event::fake([PrivateMessageSent::class, PrivateMessageReceived::class]);

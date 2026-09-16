@@ -6,7 +6,6 @@ namespace BasementChat\Basement\Tests;
 
 use BasementChat\Basement\BasementServiceProvider;
 use BasementChat\Basement\Tests\Fixtures\Models\User;
-use BeyondCode\DumpServer\DumpServerServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Router;
@@ -22,7 +21,6 @@ class BasementTestCaseEnvironment
     {
         return [
             BasementServiceProvider::class,
-            DumpServerServiceProvider::class,
             SanctumServiceProvider::class,
         ];
     }
