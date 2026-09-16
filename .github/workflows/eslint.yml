@@ -12,7 +12,10 @@ on:
       - alpha
       - dev
     paths:
-      - resources/**/*.ts
+      - resources/js/**
+      - eslint.config.js
+      - tsconfig.json
+      - package.json
 
 jobs:
   code-style-check:
@@ -20,12 +23,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
-          node-version: 19
+          node-version: 22
           cache: npm
 
       - name: Clean install dependencies

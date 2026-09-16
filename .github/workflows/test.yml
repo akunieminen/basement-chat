@@ -24,21 +24,14 @@ on:
 jobs:
   test:
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        laravel: [9.*, 10.*]
+        php: ["8.3", "8.4", "8.5"]
+        laravel: ["12.*", "13.*"]
         stability: [prefer-lowest, prefer-stable]
-        include:
-          - laravel: 10.*
-            canvas: ^8.1.3
-            testbench: ^8.5.2
-            testbench-dusk: ^8.6.1
-            php: 8.1
-          - laravel: 9.*
-            canvas: ^7.5.0
-            testbench: ^7.24.1
-            testbench-dusk: ^7.25.1
-            php: 8.0
+        exclude:
+          - php: "8.5"
+            stability: prefer-lowest
 
     runs-on: ubuntu-latest
 
@@ -46,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -62,7 +55,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require --dev  "orchestra/canvas:${{ matrix.canvas }}" "orchestra/testbench:${{ matrix.testbench }}" "orchestra/testbench-dusk:${{ matrix.testbench-dusk }}" --no-interaction --no-update
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
@@ -70,25 +62,25 @@ jobs:
         run: composer show -D
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
 
-      - name: Install dependencies
+      - name: Install Node.js dependencies
         run: npm ci
 
       - name: Set up testing
         run: |
-          ./vendor/orchestra/testbench-core/create-sqlite-db
-          ./vendor/orchestra/testbench-dusk/create-sqlite-db
-          ./vendor/bin/dusk-updater detect --auto-update
+          vendor/bin/testbench package:create-sqlite-db
+          vendor/bin/testbench-dusk package:create-sqlite-db
+          vendor/bin/dusk-updater detect --auto-update
           npm run build
           npx soketi start &
           npx wait-on tcp:127.0.0.1:6001
 
       - name: Execute tests
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v4
         with:
           max_attempts: 2
           timeout_seconds: 600
@@ -97,34 +89,34 @@ jobs:
           command: composer test -- --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Upload browser screenshots
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: browser screenshots
           path: tests/Browser/screenshots
 
       - name: Upload browser console logs
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: browser console
           path: tests/Browser/console
 
       - name: Upload testbench core logs
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: testbench core
           path: vendor/orchestra/testbench-core/laravel/storage/logs/
 
       - name: Upload testbench dusk logs
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: testbench dusk
           path: vendor/orchestra/testbench-dusk/laravel/storage/logs/

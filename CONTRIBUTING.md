@@ -13,9 +13,9 @@ Thank you for being interested in contributing to Basement Chat! Here's the guid
 
 To start developing Basement Chat, make sure you have installed
 
-- `node >= 18`
-- `php >= 8.1`
-- `docker` or `chromium` to run Laravel Dusk browser tests.
+- `node >= 22`
+- `php >= 8.3`
+- `docker` or Google Chrome / `chromium` to run Laravel Dusk browser tests.
 
 ### Installation
 
@@ -96,48 +96,50 @@ When modifying source code files, you can use the following commands to check if
   ```
   composer run-script test:unit
   ```
-- Run feature tests:
+- Run feature tests (no websocket server needed, the test environment uses the `null` broadcaster):
   ```
-  npx soketi start
   composer run-script test:feature
   ```
 - Run browser tests:
+
   ```
-  ./vendor/orchestra/testbench-core/create-sqlite-db
-  ./vendor/orchestra/testbench-dusk/create-sqlite-db
-  ./vendor/bin/dusk-updater detect --auto-update
-  npx soketi start
+  vendor/bin/dusk-updater detect --auto-update
+  vendor/bin/testbench-dusk package:create-sqlite-db
+  npm run build
+  npx soketi start & npx wait-on tcp:127.0.0.1:6001
   composer run-script test:browser
   ```
+
+  `composer run-script test:browser` serves the testbench-dusk skeleton (`vendor/orchestra/testbench-dusk/laravel`), so that is the sqlite file the browser tests use.
+
+  If Google Chrome is only installed as a flatpak (`com.google.Chrome`), point `dusk-updater` at its binary and put a `google-chrome` wrapper on your `PATH` before running the commands above:
+
+  ```
+  vendor/bin/dusk-updater detect --auto-update --chrome-dir=/var/lib/flatpak/app/com.google.Chrome/current/active/files/extra/chrome
+  mkdir -p /tmp/chrome-bin && printf '#!/bin/sh\nexec /var/lib/flatpak/app/com.google.Chrome/current/active/files/extra/chrome "$@"\n' > /tmp/chrome-bin/google-chrome && chmod +x /tmp/chrome-bin/google-chrome && export PATH=/tmp/chrome-bin:$PATH
+  ```
+
   Since the browser test is a bit tricky as it may fail depending on your OS environment, it is generally recommended to run tests with docker using the following command:
+
   ```
   docker-compose --file .devcontainer/docker-compose.yml run --rm test
   ```
+
   All failed browser test results including logs and screenshots will be stored in [`tests/Browser/console/`](tests/Browser/console/) and [`tests/Browser/screenshots/`](tests/Browser/screenshots/)
-
-### Debugging Guide
-
-The Basement Chat package is integrated with [Laravel Dump Server](https://beyondco.de/docs/laravel-dump-server). This feature makes it easy to perform interactive print debugging. So whenever you use `dd` or `dump`, the dumped data can be seen in the given URL (by default it uses http://localhost:8080/):
-
-```bash
-composer run-script dumper:start # start var dump server
-composer run-script dumper:serve # serve dumped data to http://localhost:8080
-```
 
 ### Commonly used scripts
 
 - Composer
   - `composer run-script analyse`: run static code analysis using [PHPStan](https://phpstan.org/)
-  - `composer run-script canvas`: run code generators using [canvas](https://github.com/orchestral/canvas), similar to the `artisan make` command
-  - `composer run-script format`: format `.php` files to [PSR-12 code style](https://www.php-fig.org/psr/psr-12/) using [Laravel Pint](https://laravel.com/docs/10.x/pint)
+  - `composer run-script format`: format `.php` files to [PSR-12 code style](https://www.php-fig.org/psr/psr-12/) using [Laravel Pint](https://laravel.com/docs/12.x/pint)
   - `composer run-script insights`: run code quality analysis using [PHPInsights](https://phpinsights.com/)
-  - `composer run-script test`: run the unit, feature, and browser tests using [PHPUnit](https://phpunit.de/) and [Laravel Dusk](https://laravel.com/docs/10.x/dusk)
+  - `composer run-script test`: run the unit, feature, and browser tests using [PHPUnit](https://phpunit.de/) and [Laravel Dusk](https://laravel.com/docs/12.x/dusk)
 - NPM
   - `npm run commit`: commit changes with [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) rules using [Commitizen](https://github.com/commitizen/cz-cli)
   - `npm run build`: build production bundles of `.ts` and `.css` assets using [Rollup](https://rollupjs.org/)
   - `npm run dev`: run the [Vite](https://vitejs.dev/) development server
-  - `npm run format`: format `.yml`, `.css`, `.blade.php`, and `.json` files using [Prettier](https://prettier.io/)
-  - `npm run lint`: fix `.js` and `.ts` files to [Airbnb code style](https://github.com/airbnb/javascript) using [ESLint](https://github.com/eslint/eslint)
+  - `npm run format`: format `.ts`, `.js`, `.yml`, `.css`, `.blade.php`, `.json`, and `.md` files using [Prettier](https://prettier.io/)
+  - `npm run lint`: fix `.ts` files using [ESLint](https://github.com/eslint/eslint) with the [typescript-eslint](https://typescript-eslint.io/) recommended and strict rules
 
 ## Coding Rules
 
@@ -177,14 +179,15 @@ Here are some guidelines on the code styles used in the Basement Chat project:
 
 ### CSS
 
-TailwindCSS class should be prefixed with `bm-` to prevent style conflicts.
+Tailwind CSS (v4) classes use the `bm` prefix to prevent style conflicts. The prefix always comes first, variants follow it, and `!important` is a suffix: `bm:grid`, `bm:hover:bg-blue-500`, `bm:block!`. The Tailwind configuration lives in `resources/css/app.css` (there is no `tailwind.config` file).
 
 ### TypeScript
 
-Basement Chat uses a customized code style based on [Airbnb](https://github.com/airbnb/javascript) guide. You can fix your code style automatically using the following command:
+Basement Chat uses the [typescript-eslint](https://typescript-eslint.io/) recommended and strict rule sets for linting and [Prettier](https://prettier.io/) defaults for formatting. You can fix your code automatically using the following commands:
 
 ```
 npm run lint
+npm run format
 ```
 
 ## Commit Message Guidelines
@@ -205,7 +208,7 @@ Consider these guidelines before submitting PR:
 
 - When you have a new idea that hasn't been listed on the [roadmap](https://github.com/basement-chat/basement-chat/projects), feel free to open a PR draft or issue first to discuss your idea.
 
-- Don't commit your `dist` folder when building assets as it will be hard to review your changes. Instead, we build assets using [CI/CD](.github/workflows/semantic-release.yml) when changes are merged into the core branch.
+- Rebuild `dist` with `npm run build` and commit it together with the frontend change: consumers install the committed `dist/` straight from git, and the build is deterministic so reviewers can re-run it.
 
 - It is highly recommended that your code follows our [coding rules](#coding-rules).
 

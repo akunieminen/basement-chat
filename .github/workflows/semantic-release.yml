@@ -15,15 +15,16 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.repository == 'akunieminen/basement-chat'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
-          node-version: latest
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -33,7 +34,7 @@ jobs:
         run: npm run build
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "build(npm): bundle frontend assets [skip ci]"
 

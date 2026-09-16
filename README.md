@@ -72,7 +72,7 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
 - Lazy loading with infinite scroll messages
 - Intuitive and attractive design using TailwindCSS and Alpine.js
 - Can be used with various CSS frontend frameworks such as Bootstrap and TailwindCSS without worrying about style conflicts
-- Flexible broadcast driver support, [Pusher](https://pusher.com/), [Ably](https://ably.com/), [Soketi](https://docs.soketi.app/), [Laravel Websockets](https://beyondco.de/docs/laravel-websockets/), or any other Laravel supported broadcast driver, it's up to you to decide.
+- Flexible broadcast driver support, [Pusher](https://pusher.com/), [Ably](https://ably.com/), [Laravel Reverb](https://reverb.laravel.com/), [Soketi](https://docs.soketi.app/), or any other Laravel supported broadcast driver, it's up to you to decide.
 
 ## Demo
 
@@ -82,8 +82,8 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
 
 ### Requirements:
 
-- Server-side: `php ^8.0` and `laravel/framework ^9.0.0 | ^10.0.0` installed in your project.
-- Client-side: `chrome >= 80`, `edge >= 80`, `firefox >= 74`, or equivalent. See details [here](https://browsersl.ist/#q=chrome+%3E%3D+80%2C+edge+%3E%3D+80%2C+firefox+%3E%3D+74%2C+maintained+node+versions).
+- Server-side: `php ^8.3` and `laravel/framework ^12.0 || ^13.0` installed in your project.
+- Client-side: `chrome >= 111`, `edge >= 111`, `firefox >= 128`, `safari >= 16.4`, or equivalent (the browsers supported by Tailwind CSS v4). See details [here](https://browsersl.ist/#q=chrome+%3E%3D+111%2C+edge+%3E%3D+111%2C+firefox+%3E%3D+128%2C+safari+%3E%3D+16.4).
 
 ### Installation steps:
 
@@ -99,24 +99,15 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
   > The above command will publish the configuration, assets, and migration files to your Laravel application. On the other hand, it will also ask interactive questions for you to run the database migrations and ask you to install which broadcast driver you will use.
 - Selecting a broadcast driver
 
-  Before selecting a broadcast driver, you need to ensure that `BroadcastServiceProvider::class` is enabled by uncommenting it or adding it to your `providers` in `config/app.php`:
+  Before selecting a broadcast driver, you need to ensure that broadcasting is enabled. On Laravel 11+, you can install broadcasting support using:
 
-  ```diff
-  /*
-   * Application Service Providers...
-   */
-  App\Providers\AppServiceProvider::class,
-  App\Providers\AuthServiceProvider::class,
-  - // App\Providers\BroadcastServiceProvider::class,
-  + App\Providers\BroadcastServiceProvider::class,
-  App\Providers\EventServiceProvider::class,
-  App\Providers\RouteServiceProvider::class,
+  ```
+  php artisan install:broadcasting
   ```
 
   Then you can select one of the following drivers:
 
   > If you accidentally missed installing the driver in the previous step, you can install it again using the `php artisan basement:install driver` command.
-
   - <details>
       <summary><a href="https://pusher.com/">Pusher</a> (Click here to expand)</summary>
 
@@ -124,11 +115,35 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
 
     ```ini
     BASEMENT_BROADCAST_DRIVER=pusher
-    BROADCAST_DRIVER=pusher
+    BROADCAST_CONNECTION=pusher
     PUSHER_APP_ID=<replace-with-your-pusher-app-id>
     PUSHER_APP_KEY=<replace-with-your-pusher-key>
     PUSHER_APP_SECRET=<replace-with-your-pusher-secret>
     PUSHER_APP_CLUSTER=<replace-with-your-pusher-cluster>
+    ```
+
+    </details>
+
+  - <details>
+      <summary><a href="https://reverb.laravel.com/">Laravel Reverb</a> (Click here to expand)</summary>
+
+    Laravel Reverb is Laravel's first-party WebSocket server. After installing Reverb, configure your `.env`:
+
+    ```ini
+    BASEMENT_BROADCAST_DRIVER=reverb
+    BROADCAST_CONNECTION=reverb
+    REVERB_APP_ID=<replace-with-your-reverb-app-id>
+    REVERB_APP_KEY=<replace-with-your-reverb-key>
+    REVERB_APP_SECRET=<replace-with-your-reverb-secret>
+    REVERB_HOST=127.0.0.1
+    REVERB_PORT=8080
+    REVERB_SCHEME=http
+    ```
+
+    Then, keep the Reverb server running:
+
+    ```
+    php artisan reverb:start
     ```
 
     </details>
@@ -140,7 +155,7 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
 
     ```ini
     BASEMENT_BROADCAST_DRIVER=ably
-    BROADCAST_DRIVER=ably
+    BROADCAST_CONNECTION=ably
     ABLY_KEY=<replace-with-your-ably-key>
     ABLY_PUBLIC_KEY=<replace-with-your-ably-public-key>
     ```
@@ -154,7 +169,7 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
 
     ```ini
     BASEMENT_BROADCAST_DRIVER=soketi
-    BROADCAST_DRIVER=pusher
+    BROADCAST_CONNECTION=pusher
     PUSHER_APP_ID=app-id
     PUSHER_APP_KEY=app-key
     PUSHER_APP_SECRET=app-secret
@@ -171,33 +186,9 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
 
     </details>
 
-  - <details>
-      <summary><a href="https://beyondco.de/docs/laravel-websockets/">Laravel Websockets</a> (Click here to expand)</summary>
-
-    Similar to Soketi, you need to configure `.env` first with the following configuration:
-
-    ```ini
-    BASEMENT_BROADCAST_DRIVER=laravel-websockets
-    BROADCAST_DRIVER=pusher
-    PUSHER_APP_ID=app-id
-    PUSHER_APP_KEY=app-key
-    PUSHER_APP_SECRET=app-secret
-    PUSHER_HOST=127.0.0.1
-    PUSHER_PORT=6001
-    PUSHER_SCHEME=http
-    ```
-
-    Then, keep the Laravel Websockets server running with the following command when you want to use chat features in your app:
-
-    ```
-    php artisan websockets:serve
-    ```
-
-    </details>
-
 - Configure your Sanctum Stateful Domains
 
-  Since this package uses [Laravel Sanctum](https://laravel.com/docs/10.x/sanctum) as the primary authentication system, you will need to configure your `.env` to use the equivalent `SANCTUM_STATEFUL_DOMAINS` with the domain you are currently using:
+  Since this package uses [Laravel Sanctum](https://laravel.com/docs/12.x/sanctum) as the primary authentication system, you will need to configure your `.env` to use the equivalent `SANCTUM_STATEFUL_DOMAINS` with the domain you are currently using:
 
   ```
   SANCTUM_STATEFUL_DOMAINS=<your-app-domain>
@@ -289,8 +280,8 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
     - First, make sure you assign the following packages to the global `window` object:
       - `alpinejs@^3` with `@alpinejs/intersect@^3` plugin as `window.Alpine`
       - `axios@^1` as `window.axios`
-      - `laravel-echo@^1` as `window.Echo`
-      - `pusher-js@^7` as `window.Pusher`
+      - `laravel-echo@^2` as `window.Echo`
+      - `pusher-js@^8` as `window.Pusher`
         > To automatically install the above dependencies you can use the following command:
         >
         > ```
@@ -298,6 +289,7 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
         > ```
     - Then, you need to import the following modules:
       - `vendor/basement-chat/basement-chat/dist/basement.bundle.min.css`
+        > Import the stylesheet un-layered; `@import ... layer(...)` nests Tailwind's layers and your own preflight will override the widget.
       - `vendor/basement-chat/basement-chat/dist/basement.plugin.esm` as an Alpine.js plugin
       - `vendor/basement-chat/basement-chat/dist/basement.echo-options.esm` as a Laravel Echo argument
         > You can change the `.esm` suffix to `.common` if you are using cjs module instead of esm.
@@ -324,11 +316,42 @@ The Basement name was inspired by Aech's private chat room from [Ready Player On
       window.Alpine.start()
       ```
 
+      > `echoOptions` is read from the `<x-basement::chat-box />` element, so it is an empty object on pages that do not render the widget. Laravel Echo 2 throws when the `broadcaster` key is missing (this is also why the default `null` connection is `['broadcaster' => 'null']`), so guard the call if your bundle is loaded on such pages, e.g. `if (document.querySelector('.basement-chat-box')) window.Echo = new Echo(echoOptions)`.
+
     </details>
 
 ## Configurations
 
 This package publishes a `config/basement.php` configuration file and offers options to configure `broadcaster`, `chat_box_widget_position`, `user_model`, `avatar`, and `middleware`. See this [file](./config/basement.php) for more detailed information on what you can configure.
+
+Options backed by enums take the native PHP enum's backing value, and the `null` broadcaster (the default when `BASEMENT_BROADCAST_DRIVER` is not set) must be declared as `['broadcaster' => 'null']` because Laravel Echo 2 requires a `broadcaster` key:
+
+```php
+use BasementChat\Basement\Enums\AvatarStyle;
+use BasementChat\Basement\Enums\ChatBoxPosition;
+
+return [
+    'broadcaster' => [
+        'default' => env('BASEMENT_BROADCAST_DRIVER', 'null'),
+        'connections' => [
+            // ...
+            'null' => ['broadcaster' => 'null'],
+        ],
+    ],
+
+    'chat_box_widget_position' => ChatBoxPosition::BottomRight->value,
+
+    'avatar' => [
+        'style' => AvatarStyle::Micah->value,
+        'options' => [
+            'backgroundColor' => '3584e4',
+            'size' => 64,
+        ],
+    ],
+
+    // ...
+];
+```
 
 ## Advanced Customizations
 
@@ -364,7 +387,7 @@ class User extends Authenticatable implements BasementUserContract
 
 ### Using custom avatars
 
-Like when you are changing the name shown in the contacts. You can also override the default `getAvatarAttribute` to change your contact's avatar.
+By default avatars are generated by [DiceBear](https://www.dicebear.com/styles/) (`https://api.dicebear.com/9.x/{style}/svg`): pick a style with `basement.avatar.style` and pass any DiceBear query option (for example `backgroundColor` or `size`) through `basement.avatar.options`. Like when you are changing the name shown in the contacts, you can also override the default `getAvatarAttribute` to change your contact's avatar.
 
 ```php
 <?php
@@ -493,7 +516,7 @@ class AppServiceProvider extends ServiceProvider
 
 ### Customizing view styles
 
-It is also possible to customize the view style. For example, you can do the following steps to change the color of the header and icon of a chat box component:
+It is also possible to customize the view style. The views use Tailwind CSS v4 classes with the `bm` prefix: the prefix always comes first (`bm:grid`, `bm:hidden`, `bm:hover:bg-blue-500`) and `!important` is a suffix (`bm:block!`). For example, you can do the following steps to change the color of the header and icon of a chat box component:
 
 - Publish views with the following command:
   ```
@@ -502,7 +525,7 @@ It is also possible to customize the view style. For example, you can do the fol
 - Open the `resources/views/vendor/basement/components/organisms/header.blade.php` file, and add the style attribute like the following:
   ```diff
   <header {{ $attributes->merge([
-    'class' => 'bm-grid bm-grid-cols-5 bm-border-b bm-border-gray-300 bm-p-3 bm-bg-blue-500 bm-text-white bm-rounded-t-md',
+    'class' => 'bm:grid bm:grid-cols-5 bm:border-b bm:border-gray-300 bm:p-3 bm:bg-blue-500 bm:text-white bm:rounded-t-md',
   + 'style' => 'background-color: cornflowerblue;',
   ]) }}>
     ...
@@ -517,9 +540,9 @@ It is also possible to customize the view style. For example, you can do the fol
       <button
   +     style="color: cornflowerblue"
         x-on:click="isMinimized = false"
-        x-bind:class="isMinimized === true ? '' : 'bm-hidden'"
+        x-bind:class="isMinimized === true ? '' : 'bm:hidden'"
         x-bind:data-title="totalUnreadMessages === 0 ? 'Open chat box' : `There are ${totalUnreadMessages} unread messages`"
-        class="basement-chat-box__open-button bm-w-full bm-h-full bm-rounded-full bm-text-blue-500 bm-border bm-bg-white bm-transition bm-duration-500 hover:bm-text-white hover:bm-bg-blue-500 bm-shadow-lg">
+        class="basement-chat-box__open-button bm:w-full bm:h-full bm:rounded-full bm:text-blue-500 bm:border bm:bg-white bm:transition bm:duration-500 bm:hover:text-white bm:hover:bg-blue-500 bm:shadow-lg">
         ...
       </button>
 
@@ -568,9 +591,9 @@ export default defineConfig({
 });
 ```
 
-### Broadcasting auth error when using route cache
+### Route caching
 
-Basement Chat package may fail to start and you may get a 403 Forbidden - HTTP Error when accessing the `broadcasting/auth` endpoint in the browser console when you use the `php artisan route:cache` command. The solution to this problem is still under further investigation, we recommend that you do not use route caching feature at this time.
+Route caching (`php artisan route:cache`) is supported: the broadcast channel authorization callbacks are registered by the service provider rather than through a cached route file.
 
 ## Roadmap
 

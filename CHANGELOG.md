@@ -1,3 +1,5 @@
+> Entries below are from upstream [basement-chat/basement-chat](https://github.com/basement-chat/basement-chat) (archived July 2023); the changelog is frozen at 1.1.1 and this fork's changes are tracked in git history.
+
 ## [1.1.1](https://github.com/basement-chat/basement-chat/compare/v1.1.0...v1.1.1) (2023-06-03)
 
 
