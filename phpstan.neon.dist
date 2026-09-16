@@ -1,6 +1,6 @@
 includes:
   - phpstan-baseline.neon
-  - ./vendor/nunomaduro/larastan/extension.neon
+  - ./vendor/larastan/larastan/extension.neon
   - ./vendor/phpstan/phpstan-phpunit/extension.neon
   - ./vendor/phpstan/phpstan-deprecation-rules/rules.neon
 
@@ -14,4 +14,10 @@ parameters:
   tmpDir: build/phpstan
   checkOctaneCompatibility: true
   checkModelProperties: true
-  checkMissingIterableValueType: false
+  configDirectories:
+    - %currentWorkingDirectory%/config
+  databaseMigrationsPath:
+    - vendor/orchestra/testbench-core/laravel/migrations
+    - %currentWorkingDirectory%/database/migrations
+  ignoreErrors:
+    - identifier: trait.unused

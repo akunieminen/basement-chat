@@ -19,26 +19,21 @@
     }
   ],
   "require": {
-    "php": "^8.0",
-    "laravel/framework": "^9.0.0 | ^10.0.0 | ^11.0.0 | ^12.0.0",
-    "laravel/sanctum": "^2.14.0 | ^3.0.1 | ^4.0.0",
-    "spatie/enum": "^3.13.0",
-    "spatie/laravel-package-tools": "^1.19.0"
+    "php": "^8.3",
+    "laravel/framework": "^12.0 || ^13.0",
+    "laravel/sanctum": "^4.0",
+    "spatie/laravel-package-tools": "^1.93.2"
   },
   "require-dev": {
-    "beyondcode/laravel-dump-server": "^1.8.0",
-    "laravel/pint": "^1.2.0",
-    "nunomaduro/collision": "^6.4.0",
-    "nunomaduro/larastan": "^2.2.5",
-    "nunomaduro/phpinsights": "^2.6.1",
-    "orchestra/canvas": "^7.5.0",
-    "orchestra/testbench": "^7.24.1",
-    "orchestra/testbench-dusk": "^7.25.1",
-    "phpstan/phpstan-deprecation-rules": "^1.0.0",
-    "phpstan/phpstan-phpunit": "^1.1.1",
-    "phpunit/phpunit": "^9.5.25",
-    "pusher/pusher-php-server": "^7.2.1",
-    "squizlabs/php_codesniffer": "^3.7.1"
+    "larastan/larastan": "^3.12",
+    "laravel/pint": "^1.32",
+    "nunomaduro/phpinsights": "^2.14.2",
+    "orchestra/testbench": "^10.11 || ^11.2",
+    "orchestra/testbench-dusk": "^10.11 || ^11.4",
+    "phpstan/phpstan-deprecation-rules": "^2.0.5",
+    "phpstan/phpstan-phpunit": "^2.0.18",
+    "phpunit/phpunit": "^11.5.50 || ^12.5.8",
+    "pusher/pusher-php-server": "^7.3"
   },
   "autoload": {
     "psr-4": {
@@ -53,15 +48,6 @@
   },
   "scripts": {
     "analyse": "vendor/bin/phpstan analyse --memory-limit=256M",
-    "canvas": "vendor/bin/canvas",
-    "dumper:start": [
-      "Composer\\Config::disableProcessTimeout",
-      "./vendor/bin/var-dump-server --format=html > dump.html"
-    ],
-    "dumper:serve": [
-      "Composer\\Config::disableProcessTimeout",
-      "@php -S localhost:8080 dump.html"
-    ],
     "format": "vendor/bin/pint",
     "insights": "vendor/bin/phpinsights analyse config database routes src",
     "test": [
@@ -78,7 +64,7 @@
     ],
     "test:browser": [
       "Composer\\Config::disableProcessTimeout",
-      "vendor/bin/testbench package:test --testsuite=Feature"
+      "vendor/bin/testbench package:test --testsuite=Browser"
     ]
   },
   "config": {
@@ -98,6 +84,5 @@
       }
     }
   },
-  "minimum-stability": "dev",
   "prefer-stable": true
 }
