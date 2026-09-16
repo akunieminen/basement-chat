@@ -1,3 +1,3 @@
-import type { intlFormat } from 'date-fns'
+import type { intlFormat } from "date-fns";
 
-export type FormatOptions = Parameters<typeof intlFormat>[1]
+export type FormatOptions = Parameters<typeof intlFormat>[1];

@@ -1,6 +1,6 @@
 enum NotificationStatus {
-  Allowed = 'ALLOWED',
-  Muted = 'MUTED',
+  Allowed = "ALLOWED",
+  Muted = "MUTED",
 }
 
-export default NotificationStatus
+export default NotificationStatus;

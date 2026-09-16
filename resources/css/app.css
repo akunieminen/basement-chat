@@ -1,8 +1,32 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss" prefix(bm);
+@plugin "@tailwindcss/forms" {
+  strategy: class;
+}
+@source "../views";
 @import "tippy.js/dist/tippy.css";
 
+@theme inline {
+  --font-sans:
+    Nunito, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+/* Tailwind v3 preflight defaults dropped in v4 */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--bm-color-gray-200, currentcolor);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 .tippy-content {
-  @apply bm-font-sans;
+  @apply bm:font-sans;
 }

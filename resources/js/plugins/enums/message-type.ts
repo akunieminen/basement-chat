@@ -1,6 +1,6 @@
 enum MessageType {
-  Document = 'DOCUMENT',
-  Text = 'TEXT',
+  Document = "DOCUMENT",
+  Text = "TEXT",
 }
 
-export default MessageType
+export default MessageType;

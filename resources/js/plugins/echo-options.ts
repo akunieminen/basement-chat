@@ -1,4 +1,8 @@
-const container = document.querySelector('.basement-chat-box')
-const echoOptions = JSON.parse(container?.getAttribute('data-echo-options') ?? '{}') as object
+import type { BroadcastDriver, EchoOptions } from "laravel-echo";
 
-export default echoOptions
+const container = document.querySelector(".basement-chat-box");
+const echoOptions = JSON.parse(
+  container?.getAttribute("data-echo-options") ?? "{}",
+) as EchoOptions<BroadcastDriver> & { broadcaster: BroadcastDriver };
+
+export default echoOptions;

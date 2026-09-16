@@ -1,15 +1,17 @@
-import type { AlpineComponent } from 'alpinejs'
-import Push from 'push.js'
-import { delegate, type Instance } from 'tippy.js'
-import NotificationStatus from '../enums/notification-status'
-import type { ChatBoxComponent } from '../types/components'
-import type { PushNotificationEvent } from '../types/events'
+import type { AlpineComponent } from "alpinejs";
+import Push from "push.js";
+import { delegate, type Instance } from "tippy.js";
+import NotificationStatus from "../enums/notification-status";
+import type { ChatBoxComponent } from "../types/components";
+import type { PushNotificationEvent } from "../types/events";
 
 export default (): AlpineComponent<ChatBoxComponent> => ({
   isMinimized: true,
   isContactOpened: true,
   isMessageBoxOpened: false,
-  isNotificationAllowed: window.localStorage.getItem('basement.notification') === NotificationStatus.Allowed,
+  isNotificationAllowed:
+    window.localStorage.getItem("basement.notification") ===
+    NotificationStatus.Allowed,
   hasNotificationPermission: Push.Permission.has(),
   online: true,
   totalUnreadMessages: 0,
@@ -18,32 +20,41 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
    * Hook during the initialization phase of the current Alpine component.
    */
   init(): void {
-    void window.axios.get('/sanctum/csrf-cookie')
+    void window.axios.get("/sanctum/csrf-cookie");
 
-    window.addEventListener('online', (): void => {
-      this.online = true
-    })
+    window.addEventListener("online", (): void => {
+      this.online = true;
+    });
 
-    window.addEventListener('offline', (): void => {
-      this.online = false
-    })
+    window.addEventListener("offline", (): void => {
+      this.online = false;
+    });
 
-    this.$watch('isNotificationAllowed', this.watchNotificationStatus.bind(this))
-    this.$el.addEventListener('send-push-notification', this.sendPushNotification.bind(this))
+    this.$watch(
+      "isNotificationAllowed",
+      this.watchNotificationStatus.bind(this),
+    );
+    this.$el.addEventListener(
+      "send-push-notification",
+      this.sendPushNotification.bind(this),
+    );
 
-    this.registerTippy()
+    this.registerTippy();
   },
 
   /**
    * Request push notification permission to the browser.
    */
   requestNotificationPermission(): void {
-    Push.Permission.request((): void => {
-      this.isNotificationAllowed = true
-      this.hasNotificationPermission = true
-    }, (): void => {
-      this.hasNotificationPermission = false
-    })
+    Push.Permission.request(
+      (): void => {
+        this.isNotificationAllowed = true;
+        this.hasNotificationPermission = true;
+      },
+      (): void => {
+        this.hasNotificationPermission = false;
+      },
+    );
   },
 
   /**
@@ -51,7 +62,7 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
    */
   sendPushNotification(event: CustomEvent<PushNotificationEvent>): void {
     if (this.isNotificationAllowed === false) {
-      return
+      return;
     }
 
     void Push.create(event.detail.title, {
@@ -59,10 +70,10 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
       icon: event.detail.icon,
       timeout: 4000,
       onClick(this: Notification): void {
-        window.focus()
-        this.close()
+        window.focus();
+        this.close();
       },
-    })
+    });
   },
 
   /**
@@ -70,26 +81,27 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
    */
   registerTippy(): void {
     delegate(this.$el, {
-      animation: 'fade',
+      animation: "fade",
       arrow: true,
-      target: '.basement [data-title]',
+      target: ".basement [data-title]",
       onShow(instance: Instance): void {
-        const title: string | null = instance.reference.getAttribute('data-title')
+        const title: string | null =
+          instance.reference.getAttribute("data-title");
 
         if (title !== null) {
-          instance.setContent(title)
+          instance.setContent(title);
         }
       },
-    })
+    });
   },
 
   /**
    * Watch when the notification status changes.
    */
   watchNotificationStatus(newValue: boolean): void {
-    const status: NotificationStatus = newValue === true ? NotificationStatus.Allowed
-      : NotificationStatus.Muted
+    const status: NotificationStatus =
+      newValue === true ? NotificationStatus.Allowed : NotificationStatus.Muted;
 
-    window.localStorage.setItem('basement.notification', status)
+    window.localStorage.setItem("basement.notification", status);
   },
-})
+});
