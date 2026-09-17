@@ -27,6 +27,7 @@
   "require-dev": {
     "larastan/larastan": "^3.12",
     "laravel/pint": "^1.32",
+    "laravel/reverb": "^1.11",
     "nunomaduro/phpinsights": "^2.14.2",
     "orchestra/testbench": "^10.11 || ^11.2",
     "orchestra/testbench-dusk": "^10.11 || ^11.4",
@@ -65,7 +66,8 @@
     "test:browser": [
       "Composer\\Config::disableProcessTimeout",
       "vendor/bin/testbench package:test --testsuite=Browser"
-    ]
+    ],
+    "post-autoload-dump": "@php vendor/bin/testbench package:discover --ansi"
   },
   "config": {
     "optimize-autoloader": true,

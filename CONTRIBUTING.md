@@ -106,7 +106,7 @@ When modifying source code files, you can use the following commands to check if
   vendor/bin/dusk-updater detect --auto-update
   vendor/bin/testbench-dusk package:create-sqlite-db
   npm run build
-  npx soketi start & npx wait-on tcp:127.0.0.1:6001
+  CACHE_STORE=array REVERB_APP_ID=app-id REVERB_APP_KEY=app-key REVERB_APP_SECRET=app-secret vendor/bin/testbench reverb:start & npx wait-on tcp:127.0.0.1:8080
   composer run-script test:browser
   ```
 

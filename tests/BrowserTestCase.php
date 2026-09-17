@@ -45,8 +45,8 @@ class BrowserTestCase extends OrchestraDuskTestCase
         BasementTestCaseEnvironment::setConfigurations();
 
         // `testbench package:test` hands BROADCAST_CONNECTION=log to phpunit and phpunit.xml cannot override it
-        // (no force="true"); the browser suite needs the real pusher/soketi path in the test AND the served app.
-        Config::set(key: 'broadcasting.default', value: 'pusher');
+        // (no force="true"); the browser suite needs the real Reverb path in the test AND the served app.
+        Config::set(key: 'broadcasting.default', value: 'reverb');
         Config::set(key: 'app.key', value: 'base64:IDrlmrVwu65iBhbUpPq3fsv7kybcnfUFZmY1wk+mamE=');
         Config::set(key: 'auth.providers.users.model', value: User::class);
         Config::set(key: 'database.connections.sqlite.database', value: database_path('database.sqlite'));
