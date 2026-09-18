@@ -114,7 +114,8 @@ class PrivateMessageBoxTest extends BrowserTestCase
                 ->within(selector: new PrivateMessageComponent(), callback: static fn (Browser $message) => $message
                     ->sendMessage('Hello World!')
                     ->waitFor(selector: '.basement-private-messages__message-value', seconds: 10)
-                    ->assertSee('Hello World!')));
+                    ->assertSee('Hello World!')
+                    ->assertFocused('.basement-private-messages__new-message-input')));
 
             $browserReceiver->within(selector: new PrivateMessageComponent(), callback: static fn (Browser $message) => $message
                 ->waitFor(selector: '.basement-private-messages__message-value', seconds: 10)
@@ -145,6 +146,47 @@ class PrivateMessageBoxTest extends BrowserTestCase
                     ->assertSeeUnreadMessagesCount($this->sender, 10)));
 
             $browser->screenshot('itShouldBeAbleToShowTheNumberOfUnreadMessages $browser' . time());
+        });
+    }
+
+    #[Test]
+    public function itShouldMarkMessagesAsReadInEveryOpenedConversation(): void
+    {
+        $otherSender = $this->users[2];
+
+        $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 3);
+        $this->addPrivateMessages(receiver: $this->receiver, sender: $otherSender, count: 3);
+
+        $this->browse(function (Browser $browser) use ($otherSender): void {
+            $browser->maximize();
+            $browser->disableFitOnFailure();
+
+            $browser->loginAs($this->receiver, guard: 'web');
+            $browser->visit('/dashboard');
+
+            // The open button is hidden while the box is open, so read its title instead of waiting for it.
+            $waitForUnreadTitle = static fn (string $title): Browser => $browser->waitUntil(
+                script: "document.querySelector('.basement-chat-box__open-button').dataset.title === '{$title}'",
+                seconds: 10,
+            );
+
+            $browser->within(selector: new ChatBoxComponent(), callback: fn (Browser $chatBox) => $chatBox
+                ->assertSeeUnreadMessagesCount(6)
+                ->openChatBox()
+                ->within(selector: new ContactComponent(), callback: fn (Browser $contact) => $contact
+                    ->waitUntilContactsVisible()
+                    ->openPrivateChatWith($this->sender)));
+
+            $waitForUnreadTitle('Sinulla on 3 uutta viestiä');
+
+            // Message elements must not be recycled between conversations, or the second one is never seen.
+            $browser->within(selector: new ChatBoxComponent(), callback: fn (Browser $chatBox) => $chatBox
+                ->click('[data-title="Takaisin kontakteihin"]')
+                ->waitFor(selector: '.basement-contacts', seconds: 10)
+                ->within(selector: new ContactComponent(), callback: fn (Browser $contact) => $contact
+                    ->openPrivateChatWith($otherSender)));
+
+            $waitForUnreadTitle('Katso viestit');
         });
     }
 }

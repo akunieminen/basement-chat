@@ -29,6 +29,11 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
   )!;
   const userId = Number(container.getAttribute("data-user-id")!);
   const typingsTimeout = new Map<number, NodeJS.Timeout>();
+  // The indicator must outlive the gap between two signals (plus network
+  // jitter), otherwise it flickers while the contact is still typing.
+  const typingSignalInterval = 3000;
+  const typingIndicatorDuration = 5000;
+  let lastTypingSignalAt = 0;
 
   return {
     isInfoBoxOpened: false,
@@ -166,12 +171,18 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
      */
     async currentlyTyping(): Promise<void> {
       if (
-        this.receiver !== null &&
-        this.receiver.id !== userId &&
-        this.newMessageValue !== ""
+        this.receiver === null ||
+        this.receiver.id === userId ||
+        this.newMessageValue === "" ||
+        Date.now() - lastTypingSignalAt < typingSignalInterval
       ) {
-        await window.axios.get(this.urlCurrentlyTyping);
+        return;
       }
+
+      lastTypingSignalAt = Date.now();
+
+      // Best effort: a dropped typing signal is not worth an error.
+      await window.axios.get(this.urlCurrentlyTyping).catch((): void => {});
     },
 
     /**
@@ -275,13 +286,11 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
         event.detail.value.includes(this.searchKeyword.trim())
       ) {
         this.messages.unshift(sentMessage);
+        // Always show the user their own new message, even when scrolled up.
+        this.scrollToLastMessage();
       }
 
       this.$dispatch("update-last-private-message-sent", sentMessage);
-
-      if (this.isLastMessageShown === true) {
-        this.scrollToLastMessage();
-      }
     },
 
     /**
@@ -325,7 +334,7 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
         return;
       }
 
-      this.setStatusToTyping(event.detail.contact.id, 1500);
+      this.setStatusToTyping(event.detail.contact.id, typingIndicatorDuration);
 
       if (this.isLastMessageShown === true) {
         this.scrollToLastMessage();
@@ -404,7 +413,7 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
      * Calculate the amount of rows that the message value will take.
      */
     setMessageRows(value: string): number {
-      return Math.max(value.split("\n").length, 1);
+      return Math.min(value.split("\n").length, 5);
     },
 
     /**
@@ -458,16 +467,28 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
         throw new Error("Receiver cannot be empty");
       }
 
+      // Enter bypasses the form's "required" check.
+      if (this.newMessageValue.trim() === "") {
+        return;
+      }
+
       this.isLoadingSentMessage = true;
 
-      await window.axios
-        .post<Response<PrivateMessage>>(this.url, {
+      try {
+        await window.axios.post<Response<PrivateMessage>>(this.url, {
           value: this.newMessageValue,
-        })
-        .then(({ data }) => data);
+        });
 
-      this.newMessageValue = "";
-      this.isLoadingSentMessage = false;
+        this.newMessageValue = "";
+        lastTypingSignalAt = 0;
+      } finally {
+        this.isLoadingSentMessage = false;
+
+        // The input is disabled while sending, which drops its focus.
+        void this.$nextTick((): void => {
+          this.$refs.newMessageInput.focus();
+        });
+      }
     },
 
     /**
@@ -494,12 +515,15 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
       this.unreadMessageCursor = null;
       this.searchKeyword = "";
       this.receiver = event.detail;
+      lastTypingSignalAt = 0;
       this.url = this.urlTemplate.replace(":contact", String(event.detail.id));
       this.urlCurrentlyTyping = this.urlCurrentlyTypingTemplate.replace(
         ":contact",
         String(event.detail.id),
       );
-      void this.mount();
+      void this.mount().then((): void => {
+        this.$refs.newMessageInput.focus({ preventScroll: true });
+      });
     },
 
     /**

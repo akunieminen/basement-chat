@@ -128,7 +128,10 @@
                     />
                 </x-basement::atoms.buttons.primary>
 
-                <template x-for="messages in groupedMessages">
+                <template
+                    x-for="messages in groupedMessages"
+                    :key="messages[0].createdAt.withinDateFormat"
+                >
                     <div class="bm:flex bm:flex-col bm:gap-y-3">
                         <div class="bm:mt-2 bm:grid bm:grid-cols-5">
                             <p
@@ -136,7 +139,10 @@
                                 x-text="messages[0].createdAt.withinDateFormat"
                             ></p>
                         </div>
-                        <template x-for="message in messages">
+                        <template
+                            x-for="message in messages"
+                            :key="message.id"
+                        >
                             <div class="bm:flex bm:flex-col">
                                 <div
                                     class="bm:-mx-3 bm:mb-3 bm:mt-1 bm:rounded-b-lg bm:border-b bm:border-gray-300 bm:bg-gray-50 bm:py-1 bm:text-center bm:font-semibold bm:text-blue-500"
@@ -151,7 +157,7 @@
                                 >
                                     <div class="bm:max-w-[90%]">
                                         <p
-                                            class="basement-private-messages__message-value bm:break-words bm:rounded-t-lg bm:px-2 bm:py-1"
+                                            class="basement-private-messages__message-value bm:whitespace-pre-wrap bm:break-words bm:rounded-t-lg bm:px-2 bm:py-1"
                                             x-intersect.once="seeMessage(message)"
                                             x-text="message.value"
                                             x-bind:class="message.receiverId === receiver.id ?
@@ -295,12 +301,12 @@
                     aria-required="true"
                     x-bind:disabled="isLoadingSentMessage === true"
                     x-bind:class="isLoadingSentMessage === true ? 'bm:pl-9' : ''"
+                    x-ref="newMessageInput"
                     x-model="newMessageValue"
-                    x-on:keydown.throttle.1000ms="currentlyTyping"
-                    x-on:keydown.enter.prevent="
-                        if ($event.shiftKey) {
-                            newMessageValue += '\n';
-                        } else {
+                    x-on:input="currentlyTyping"
+                    x-on:keydown.enter="
+                        if ($event.shiftKey === false && $event.isComposing === false) {
+                            $event.preventDefault();
                             sendNewMessage();
                         }
                     "
@@ -308,7 +314,7 @@
                     required=""
                     placeholder="Viesti"
                     maxlength="5000"
-                    rows="1"
+                    x-bind:rows="setMessageRows(newMessageValue)"
                 ></x-basement::atoms.textarea>
             </x-basement::molecules.form-group>
 

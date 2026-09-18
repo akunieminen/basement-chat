@@ -5600,6 +5600,11 @@ var privateMessageComponent = () => {
     const urlCurrentlyTypingTemplate = container.getAttribute("data-currently-typing-url");
     const userId = Number(container.getAttribute("data-user-id"));
     const typingsTimeout = new Map();
+    // The indicator must outlive the gap between two signals (plus network
+    // jitter), otherwise it flickers while the contact is still typing.
+    const typingSignalInterval = 3000;
+    const typingIndicatorDuration = 5000;
+    let lastTypingSignalAt = 0;
     return {
         isInfoBoxOpened: false,
         isLastMessageShown: false,
@@ -5696,11 +5701,15 @@ var privateMessageComponent = () => {
          * Send a HTTP request to the currently typing API endpoint.
          */
         async currentlyTyping() {
-            if (this.receiver !== null &&
-                this.receiver.id !== userId &&
-                this.newMessageValue !== "") {
-                await window.axios.get(this.urlCurrentlyTyping);
+            if (this.receiver === null ||
+                this.receiver.id === userId ||
+                this.newMessageValue === "" ||
+                Date.now() - lastTypingSignalAt < typingSignalInterval) {
+                return;
             }
+            lastTypingSignalAt = Date.now();
+            // Best effort: a dropped typing signal is not worth an error.
+            await window.axios.get(this.urlCurrentlyTyping).catch(() => { });
         },
         /**
          * Action when the last message is hidden or shown.
@@ -5774,11 +5783,10 @@ var privateMessageComponent = () => {
             if (event.detail.receiver_id === this.receiver?.id &&
                 event.detail.value.includes(this.searchKeyword.trim())) {
                 this.messages.unshift(sentMessage);
-            }
-            this.$dispatch("update-last-private-message-sent", sentMessage);
-            if (this.isLastMessageShown === true) {
+                // Always show the user their own new message, even when scrolled up.
                 this.scrollToLastMessage();
             }
+            this.$dispatch("update-last-private-message-sent", sentMessage);
         },
         /**
          * Laravel Echo event listener when sent messages is marked as read.
@@ -5806,7 +5814,7 @@ var privateMessageComponent = () => {
             if (event.detail.contact.id === userId) {
                 return;
             }
-            this.setStatusToTyping(event.detail.contact.id, 1500);
+            this.setStatusToTyping(event.detail.contact.id, typingIndicatorDuration);
             if (this.isLastMessageShown === true) {
                 this.scrollToLastMessage();
             }
@@ -5866,7 +5874,7 @@ var privateMessageComponent = () => {
          * Calculate the amount of rows that the message value will take.
          */
         setMessageRows(value) {
-            return Math.max(value.split("\n").length, 1);
+            return Math.min(value.split("\n").length, 5);
         },
         /**
          * Scroll component view to given message id.
@@ -5908,14 +5916,25 @@ var privateMessageComponent = () => {
             if (this.receiver === null) {
                 throw new Error("Receiver cannot be empty");
             }
+            // Enter bypasses the form's "required" check.
+            if (this.newMessageValue.trim() === "") {
+                return;
+            }
             this.isLoadingSentMessage = true;
-            await window.axios
-                .post(this.url, {
-                value: this.newMessageValue,
-            })
-                .then(({ data }) => data);
-            this.newMessageValue = "";
-            this.isLoadingSentMessage = false;
+            try {
+                await window.axios.post(this.url, {
+                    value: this.newMessageValue,
+                });
+                this.newMessageValue = "";
+                lastTypingSignalAt = 0;
+            }
+            finally {
+                this.isLoadingSentMessage = false;
+                // The input is disabled while sending, which drops its focus.
+                void this.$nextTick(() => {
+                    this.$refs.newMessageInput.focus();
+                });
+            }
         },
         /**
          * Add unread messages marker to the component.
@@ -5938,9 +5957,12 @@ var privateMessageComponent = () => {
             this.unreadMessageCursor = null;
             this.searchKeyword = "";
             this.receiver = event.detail;
+            lastTypingSignalAt = 0;
             this.url = this.urlTemplate.replace(":contact", String(event.detail.id));
             this.urlCurrentlyTyping = this.urlCurrentlyTypingTemplate.replace(":contact", String(event.detail.id));
-            void this.mount();
+            void this.mount().then(() => {
+                this.$refs.newMessageInput.focus({ preventScroll: true });
+            });
         },
         /**
          * Watch when the messages changes.
