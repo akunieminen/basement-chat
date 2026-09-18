@@ -26,18 +26,28 @@ class MarkPrivatesMessagesAsRead implements MarkPrivatesMessagesAsReadContract
     {
         $time = now();
 
+        // Clients subtract every announced message from their unread totals, so messages that were
+        // already read must not be announced again.
+        // ponytail: filters on the loaded read_at; two tabs racing within the same few ms can still
+        // double-announce. Lock the rows if that ever shows up.
+        $unreadMessages = $privateMessages->whereNull('read_at')->values();
+
+        if ($unreadMessages->isEmpty()) {
+            return $privateMessages;
+        }
+
         Basement::newPrivateMessageModel()
-            ->whereIn('id', $privateMessages->pluck('id'))
+            ->whereIn('id', $unreadMessages->pluck('id'))
             ->whereNull('read_at')
             ->update([
                 'read_at' => $time,
             ]);
 
-        $privateMessages->each(static function (PrivateMessageData $data) use ($time): void {
+        $unreadMessages->each(static function (PrivateMessageData $data) use ($time): void {
             $data->read_at = $time;
         });
 
-        $this->notify(receiver: $readBy, privateMessages: $privateMessages);
+        $this->notify(receiver: $readBy, privateMessages: $unreadMessages);
 
         return $privateMessages;
     }

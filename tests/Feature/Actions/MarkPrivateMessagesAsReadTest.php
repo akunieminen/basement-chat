@@ -73,4 +73,37 @@ class MarkPrivateMessagesAsReadTest extends TestCase
         Event::assertDispatchedTimes(event: PrivateMessagesReceivedMarkedAsRead::class, times: 1);
         Event::assertDispatchedTimes(event: PrivateMessagesSentMarkedAsRead::class, times: 1);
     }
+
+    #[Test]
+    public function itShouldNotAnnounceMessagesThatWereAlreadyRead(): void
+    {
+        $readAt = now()->subDay()->startOfSecond();
+
+        $this->addPrivateMessages(receiver: $this->receiver, sender: $this->sender, count: 3, state: [
+            'read_at' => $readAt,
+        ]);
+
+        Event::fake([
+            PrivateMessagesReceivedMarkedAsRead::class,
+            PrivateMessagesSentMarkedAsRead::class,
+        ]);
+
+        /** @var \BasementChat\Basement\Contracts\MarkPrivatesMessagesAsRead $markAsRead */
+        $markAsRead = app(MarkPrivatesMessagesAsRead::class);
+        $markAsRead->markAsRead(
+            readBy: $this->receiver,
+            privateMessages: PrivateMessageData::collectionFromId(
+                messagesId: $this->privateMessages->pluck('id')->toArray(),
+                with: ['sender'],
+            ),
+        );
+
+        $this->assertSame(
+            expected: 3,
+            actual: DB::table('private_messages')->where('read_at', $readAt)->count(),
+        );
+
+        Event::assertNotDispatched(PrivateMessagesReceivedMarkedAsRead::class);
+        Event::assertNotDispatched(PrivateMessagesSentMarkedAsRead::class);
+    }
 }
