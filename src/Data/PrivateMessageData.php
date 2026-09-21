@@ -109,8 +109,6 @@ class PrivateMessageData implements Arrayable
             'id' => $this->id,
             'created_at' => $this->created_at?->toISOString(),
             'read_at' => $this->read_at?->toISOString(),
-            'receiver' => $this->receiver->toArray(),
-            'sender' => $this->sender->toArray(),
         ];
     }
 }

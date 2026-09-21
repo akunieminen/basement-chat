@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @method static Authenticatable&User&static addSelectLastPrivateMessageId(Authenticatable&User $value)
@@ -84,18 +83,20 @@ trait HasPrivateMessages
     {
         /** @var \Illuminate\Database\Eloquent\Model $this */
 
-        $query->addSelect([
-            'last_private_message_id' => Basement::newPrivateMessageModel()
-                ->orderByDescId()
-                ->select('id')
-                ->where(fn (Builder|QueryBuilder $clause): Builder => $clause
-                    ->where('receiver_id', $user->id)
-                    ->whereColumn('sender_id', "{$this->getTable()}.{$this->primaryKey}"))
-                ->orWhere(fn (Builder|QueryBuilder $clause): Builder => $clause
-                    ->where('sender_id', $user->id)
-                    ->whereColumn('receiver_id', "{$this->getTable()}.{$this->primaryKey}"))
-                ->limit(1),
-        ]);
+        $last = Basement::newPrivateMessageModel()
+            ->selectRaw('case when receiver_id = ? then sender_id else receiver_id end as contact_id, max(id) as last_private_message_id', [$user->id])
+            ->where(fn (Builder|QueryBuilder $clause): Builder => $clause
+                ->where('receiver_id', $user->id)
+                ->orWhere('sender_id', $user->id))
+            ->groupBy('contact_id');
+
+        if ($query->getQuery()->columns === null) {
+            $query->select($this->qualifyColumn('*'));
+        }
+
+        $query
+            ->leftJoinSub($last, 'last_private_messages', 'last_private_messages.contact_id', '=', $this->getQualifiedKeyName())
+            ->addSelect('last_private_messages.last_private_message_id');
     }
 
     /**
@@ -108,17 +109,18 @@ trait HasPrivateMessages
     {
         /** @var \Illuminate\Database\Eloquent\Model $this */
 
-        $query->addSelect([
-            'unread_messages' => Basement::newPrivateMessageModel()
-                ->select([
-                    DB::raw(<<<'SQL'
-                        COUNT(*)
-                    SQL),
-                ])
-                ->where(fn (Builder|QueryBuilder $clause): Builder => $clause
-                    ->where('receiver_id', $user->id)
-                    ->whereColumn('sender_id', "{$this->getTable()}.{$this->primaryKey}"))
-                ->whereNull('read_at'),
-        ]);
+        $unread = Basement::newPrivateMessageModel()
+            ->selectRaw('sender_id, count(*) as unread_messages')
+            ->where('receiver_id', $user->id)
+            ->whereNull('read_at')
+            ->groupBy('sender_id');
+
+        if ($query->getQuery()->columns === null) {
+            $query->select($this->qualifyColumn('*'));
+        }
+
+        $query
+            ->leftJoinSub($unread, 'unread_private_messages', 'unread_private_messages.sender_id', '=', $this->getQualifiedKeyName())
+            ->addSelect('unread_private_messages.unread_messages');
     }
 }
