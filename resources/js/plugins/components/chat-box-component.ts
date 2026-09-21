@@ -20,8 +20,6 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
    * Hook during the initialization phase of the current Alpine component.
    */
   init(): void {
-    void window.axios.get("/sanctum/csrf-cookie");
-
     window.addEventListener("online", (): void => {
       this.online = true;
     });

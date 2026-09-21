@@ -67,7 +67,7 @@
         </x-basement::molecules.form-group>
 
         <template
-            x-for="contact in filteredContacts"
+            x-for="contact in (isMinimized ? [] : filteredContacts)"
             :key="contact.id"
         >
             <div

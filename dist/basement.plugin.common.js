@@ -3663,7 +3663,6 @@ var chatBoxComponent = () => ({
      * Hook during the initialization phase of the current Alpine component.
      */
     init() {
-        void window.axios.get("/sanctum/csrf-cookie");
         window.addEventListener("online", () => {
             this.online = true;
         });
