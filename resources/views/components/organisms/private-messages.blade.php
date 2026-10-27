@@ -1,3 +1,6 @@
+{{-- The header stays out of the sheet's motion: its title and buttons swap in one frame, as one header changing (two headers
+     crossfading read as garbled text). Leaving, the header turns transparent at once but keeps taking clicks for the 150 ms,
+     so a quick second click on back cannot reach the contacts' minimize beneath; the body lets clicks through to the rows. --}}
 <div
     class="basement-private-messages bm:absolute bm:inset-0 bm:isolate bm:flex bm:h-full bm:w-full bm:flex-col"
     data-url="{{ route('api.basement.contacts.private-messages.index', ['contact' => ':contact']) }}"
@@ -6,10 +9,10 @@
     data-user-id="{{ \Illuminate\Support\Facades\Auth::id() }}"
     x-data="basementPrivateChat"
     x-show="isMessageBoxOpened"
-    x-transition:enter="bm:transition bm:duration-200 bm:ease-out"
-    x-transition:enter-start="bm:opacity-0 bm:motion-safe:translate-x-3"
-    x-transition:leave="bm:transition bm:duration-150 bm:ease-out"
-    x-transition:leave-end="bm:opacity-0 bm:motion-safe:translate-x-3"
+    x-transition:enter="bm:duration-200 bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-200 bm:[&>:not(header)]:ease-out"
+    x-transition:enter-start="bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
+    x-transition:leave="bm:pointer-events-none bm:duration-150 bm:[&>header]:pointer-events-auto bm:[&>header]:opacity-0 bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:ease-out"
+    x-transition:leave-end="bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
 >
     <x-basement::organisms.header class="bm:z-30">
         <x-slot:title
@@ -80,24 +83,28 @@
         </div>
     </div>
 
-    <div
-        class="bm:absolute bm:z-20 bm:h-full bm:w-full bm:bg-white bm:text-5xl"
-        x-show="isLoading === true"
-        x-transition:enter="bm:duration-0"
-        x-transition:leave="bm:transition-opacity bm:duration-150 bm:ease-out"
-        x-transition:leave-end="bm:opacity-0"
-    >
-        <div
-            class="bm:flex bm:h-full bm:w-full bm:items-center bm:justify-center bm:transition-opacity bm:duration-150 bm:delay-200 bm:starting:opacity-0">
-            <x-basement::atoms.icons.fas-circle-notch class="bm:w-12 bm:animate-spin bm:text-blue-500" />
-        </div>
-    </div>
-
     <section
         class="bm:flex bm:flex-grow bm:flex-col bm:justify-between bm:overflow-y-auto bm:bg-white bm:text-gray-900">
+        {{-- The loading cover fades in with the messages it hides, as one layer: as a sibling, the previous contact's
+             messages showed through it while both faded in. top-0: at rest it still covers the whole sheet, as before. --}}
+        <div
+            class="bm:absolute bm:top-0 bm:z-20 bm:h-full bm:w-full bm:bg-white bm:text-5xl"
+            x-show="isLoading === true"
+            x-transition:enter="bm:duration-0"
+            x-transition:leave="bm:transition-opacity bm:duration-150 bm:ease-out"
+            x-transition:leave-end="bm:opacity-0"
+        >
+            <div
+                class="bm:flex bm:h-full bm:w-full bm:items-center bm:justify-center bm:transition-opacity bm:duration-150 bm:delay-200 bm:starting:opacity-0">
+                <x-basement::atoms.icons.fas-circle-notch class="bm:w-12 bm:animate-spin bm:text-blue-500" />
+            </div>
+        </div>
+
+        {{-- The search panel hangs from where it stands (3 px under the header, as top-12 did), not from an offset: the sheet's
+             slide makes the section its containing block, and an offset jumped 45 px when back closed the open panel. --}}
         <div>
             <x-basement::molecules.form-group
-                class="bm:absolute bm:left-0 bm:top-12 bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
+                class="bm:absolute bm:left-0 bm:mt-[3px] bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
                 x-transition.origin.top=""
                 x-transition:leave.opacity=""
                 x-show="isSearchOpened"
@@ -120,7 +127,7 @@
             </x-basement::molecules.form-group>
         </div>
 
-        <div class="bm:flex bm:min-h-min bm:grow bm:flex-col bm:overflow-y-auto bm:px-3">
+        <div class="bm:flex bm:min-h-0 bm:grow bm:flex-col bm:overflow-y-auto bm:px-3">
             <div class="bm:my-3 bm:flex bm:flex-col bm:gap-y-3">
                 <x-basement::atoms.buttons.primary
                     class="basement-private-messages__load-more-messages-button bm:-mx-3 bm:-mt-3 bm:border-b bm:border-gray-300 bm:bg-gray-50 bm:py-2"
@@ -262,6 +269,8 @@
         <div
             class="bm:absolute bm:bottom-[4.5rem] bm:right-6 bm:transition-opacity bm:duration-150 bm:delay-300 bm:starting:opacity-0"
             x-show="isLastMessageShown === false && messages.length> 0"
+            x-transition:leave="bm:duration-100! bm:delay-0! bm:ease-out"
+            x-transition:leave-end="bm:opacity-0"
         >
             <button
                 class="bm:relative bm:rounded-full bm:border bm:bg-white bm:p-2 bm:text-blue-500 bm:transition bm:hover:brightness-90"

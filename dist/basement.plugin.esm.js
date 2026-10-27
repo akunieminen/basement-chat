@@ -3716,6 +3716,20 @@ var chatBoxComponent = () => ({
                 }
             },
         });
+        // A view change takes the tooltip's anchor away at once (the launcher, the minimized card, the swapped header): its
+        // tooltip goes with it instead of fading out over nothing. unmount, not hideAll: the click's mousedown has already
+        // started the clicked button's fade, which hideAll skips.
+        for (const view of [
+            "isMinimized",
+            "isContactOpened",
+            "isMessageBoxOpened",
+        ]) {
+            this.$watch(view, () => {
+                this.$el
+                    .querySelectorAll("[data-title]")
+                    .forEach((el) => el._tippy?.unmount());
+            });
+        }
     },
     /**
      * Watch when the notification status changes.

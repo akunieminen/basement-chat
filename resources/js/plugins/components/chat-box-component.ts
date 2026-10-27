@@ -1,6 +1,6 @@
 import type { AlpineComponent } from "alpinejs";
 import Push from "push.js";
-import { delegate, type Instance } from "tippy.js";
+import { delegate, type Instance, type ReferenceElement } from "tippy.js";
 import NotificationStatus from "../enums/notification-status";
 import type { ChatBoxComponent } from "../types/components";
 import type { PushNotificationEvent } from "../types/events";
@@ -93,6 +93,21 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
         }
       },
     });
+
+    // A view change takes the tooltip's anchor away at once (the launcher, the minimized card, the swapped header): its
+    // tooltip goes with it instead of fading out over nothing. unmount, not hideAll: the click's mousedown has already
+    // started the clicked button's fade, which hideAll skips.
+    for (const view of [
+      "isMinimized",
+      "isContactOpened",
+      "isMessageBoxOpened",
+    ]) {
+      this.$watch(view, (): void => {
+        this.$el
+          .querySelectorAll<ReferenceElement>("[data-title]")
+          .forEach((el): void => el._tippy?.unmount());
+      });
+    }
   },
 
   /**
