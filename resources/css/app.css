@@ -11,6 +11,22 @@
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+/* Motion tokens. Keep --ease-out equal to hallinta's resources/css/app.css --ease-out. */
+@theme {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --animate-typing: bm-typing 1s ease-in-out infinite;
+
+  @keyframes bm-typing {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
 /* Tailwind v3 preflight defaults dropped in v4 */
 @layer base {
   *,

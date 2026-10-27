@@ -3707,6 +3707,8 @@ var chatBoxComponent = () => ({
     registerTippy() {
         delegate(this.$el, {
             animation: "fade",
+            delay: [200, 0],
+            duration: [150, 100],
             arrow: true,
             target: ".basement [data-title]",
             onShow(instance) {
@@ -5896,7 +5898,9 @@ var privateMessageComponent = () => {
         scrollToLastMessage() {
             const lastMessage = this.messages.at(0);
             this.scrollTo(lastMessage?.id ?? null, {
-                behavior: "smooth",
+                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                    ? "auto"
+                    : "smooth",
             });
         },
         /**

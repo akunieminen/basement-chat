@@ -5,7 +5,7 @@
         x-data="basementChatBox"
         x-bind:class="isMinimized === true ? '' : 'bm:w-[22rem]! bm:max-w-[90vw] bm:h-[32rem]! bm:max-h-full bm:pt-6'"
         @class([
-            'basement-chat-box bm:h-14 bm:w-14 bm:fixed bm:transition-all bm:duration-500 bm:z-10',
+            'basement-chat-box bm:h-14 bm:w-14 bm:fixed bm:z-10',
             'bm:bottom-3 bm:left-3' =>
                 $position === \BasementChat\Basement\Enums\ChatBoxPosition::BottomLeft,
             'bm:bottom-3 bm:right-3' =>
@@ -14,7 +14,7 @@
     >
 
         <button
-            class="basement-chat-box__open-button bm:h-full bm:w-full bm:rounded-full bm:border bm:text-blue-500 bm:shadow-lg bm:transition bm:duration-500 bm:hover:bg-blue-500 bm:hover:text-white"
+            class="basement-chat-box__open-button bm:h-full bm:w-full bm:rounded-full bm:border bm:text-blue-500 bm:shadow-lg bm:transition bm:hover:bg-blue-500 bm:hover:text-white"
             x-on:click="isMinimized = false"
             x-bind:class="[
                 isMinimized === true ? '' : 'bm:hidden',
@@ -27,14 +27,20 @@
             </template>
             <template x-if="totalUnreadMessages > 0">
                 <span
-                    class="bm:animate-pulse bm:text-xl bm:font-extrabold"
+                    class="bm:text-xl bm:font-extrabold"
                     x-text="totalUnreadMessages > 99 ? '99+' : totalUnreadMessages"
                 ></span>
             </template>
         </button>
 
         <div
-            class="bm:hidden bm:h-full bm:w-full"
+            @class([
+                'bm:hidden bm:relative bm:h-full bm:w-full bm:overflow-hidden bm:shadow-lg bm:transition bm:duration-200 bm:ease-out bm:starting:opacity-0 bm:motion-safe:starting:scale-95',
+                'bm:origin-bottom-left' =>
+                    $position === \BasementChat\Basement\Enums\ChatBoxPosition::BottomLeft,
+                'bm:origin-bottom-right' =>
+                    $position === \BasementChat\Basement\Enums\ChatBoxPosition::BottomRight,
+            ])
             x-bind:class="isMinimized === true ? '' : 'bm:block!'"
         >
             <x-basement::organisms.contacts />

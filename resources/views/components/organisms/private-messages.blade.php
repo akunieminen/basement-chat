@@ -1,13 +1,15 @@
 <div
-    class="basement-private-messages bm:relative bm:flex bm:h-full bm:w-full bm:flex-col bm:shadow-lg"
+    class="basement-private-messages bm:absolute bm:inset-0 bm:isolate bm:flex bm:h-full bm:w-full bm:flex-col"
     data-url="{{ route('api.basement.contacts.private-messages.index', ['contact' => ':contact']) }}"
     data-batch-request-url="{{ route('api.basement.private-messages.updates') }}"
     data-currently-typing-url="{{ route('api.basement.contacts.currently-typing', ['contact' => ':contact']) }}"
     data-user-id="{{ \Illuminate\Support\Facades\Auth::id() }}"
     x-data="basementPrivateChat"
     x-show="isMessageBoxOpened"
-    x-transition.scale.origin.right=""
-    x-transition:enter.duration.500ms=""
+    x-transition:enter="bm:transition bm:duration-200 bm:ease-out"
+    x-transition:enter-start="bm:opacity-0 bm:motion-safe:translate-x-3"
+    x-transition:leave="bm:transition bm:duration-150 bm:ease-out"
+    x-transition:leave-end="bm:opacity-0 bm:motion-safe:translate-x-3"
 >
     <x-basement::organisms.header class="bm:z-30">
         <x-slot:title
@@ -27,7 +29,6 @@
         <x-slot:buttons>
             <x-basement::atoms.buttons.header
                 data-title="Etsi viesteistä"
-                x-show="isMessageBoxOpened"
                 x-on:click="isSearchOpened = !isSearchOpened"
             >
                 <x-basement::atoms.icons.fas-search class="bm:m-auto bm:h-[0.9rem]" />
@@ -49,7 +50,7 @@
     <div
         class="bm:absolute bm:z-20 bm:flex bm:h-full bm:w-full bm:flex-col bm:items-center bm:justify-center bm:rounded-t-md bm:bg-white/70"
         x-show="isInfoBoxOpened === true"
-        x-transition=""
+        x-transition.opacity=""
     >
         <div
             class="bm:flex bm:w-11/12 bm:flex-col bm:gap-y-2 bm:rounded-md bm:border bm:bg-white bm:p-3 bm:text-gray-900 bm:shadow-md"
@@ -82,18 +83,23 @@
     <div
         class="bm:absolute bm:z-20 bm:h-full bm:w-full bm:bg-white bm:text-5xl"
         x-show="isLoading === true"
+        x-transition:enter="bm:duration-0"
+        x-transition:leave="bm:transition-opacity bm:duration-150 bm:ease-out"
+        x-transition:leave-end="bm:opacity-0"
     >
-        <div class="bm:flex bm:h-full bm:w-full bm:items-center bm:justify-center">
+        <div
+            class="bm:flex bm:h-full bm:w-full bm:items-center bm:justify-center bm:transition-opacity bm:duration-150 bm:delay-200 bm:starting:opacity-0">
             <x-basement::atoms.icons.fas-circle-notch class="bm:w-12 bm:animate-spin bm:text-blue-500" />
         </div>
     </div>
 
     <section
         class="bm:flex bm:flex-grow bm:flex-col bm:justify-between bm:overflow-y-auto bm:bg-white bm:text-gray-900">
-        <div x-show="isMessageBoxOpened">
+        <div>
             <x-basement::molecules.form-group
                 class="bm:absolute bm:left-0 bm:top-12 bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
-                x-transition=""
+                x-transition.origin.top=""
+                x-transition:leave.opacity=""
                 x-show="isSearchOpened"
                 x-on:click.outside="isSearchOpened = false"
             >
@@ -206,7 +212,8 @@
                                                 <ul
                                                     class="bm:w-16 bm:rounded-lg bm:border bm:bg-white bm:py-1 bm:shadow-lg"
                                                     x-show="messageIdWithOpenDialog === message.id"
-                                                    x-transition=""
+                                                    x-transition.origin.left=""
+                                                    x-transition:leave.opacity=""
                                                     x-on:click.outside="messageIdWithOpenDialog = null"
                                                 >
                                                     <li class="bm:border-gray-300">
@@ -235,14 +242,14 @@
                                 x-bind:data-title="`${receiver?.name} kirjoittaa...`"
                             >
                                 <span
-                                    class="bm:inline-block bm:h-1 bm:w-1 bm:animate-bounce bm:rounded-full bm:bg-gray-900"
+                                    class="bm:inline-block bm:h-1 bm:w-1 bm:animate-typing bm:rounded-full bm:bg-gray-900"
                                 ></span>
                                 <span
-                                    class="bm:inline-block bm:h-1 bm:w-1 bm:animate-bounce bm:rounded-full bm:bg-gray-900"
+                                    class="bm:inline-block bm:h-1 bm:w-1 bm:animate-typing bm:rounded-full bm:bg-gray-900"
                                     style="animation-delay: 0.2s"
                                 ></span>
                                 <span
-                                    class="bm:inline-block bm:h-1 bm:w-1 bm:animate-bounce bm:rounded-full bm:bg-gray-900"
+                                    class="bm:inline-block bm:h-1 bm:w-1 bm:animate-typing bm:rounded-full bm:bg-gray-900"
                                     style="animation-delay: 0.4s"
                                 ></span>
                             </p>
@@ -253,12 +260,11 @@
         </div>
 
         <div
-            class="bm:absolute bm:bottom-[4.5rem] bm:right-6"
+            class="bm:absolute bm:bottom-[4.5rem] bm:right-6 bm:transition-opacity bm:duration-150 bm:delay-300 bm:starting:opacity-0"
             x-show="isLastMessageShown === false && messages.length> 0"
-            x-transition=""
         >
             <button
-                class="bm:relative bm:rounded-full bm:border bm:bg-white bm:p-2 bm:text-blue-500 bm:transition bm:duration-500 bm:hover:brightness-90"
+                class="bm:relative bm:rounded-full bm:border bm:bg-white bm:p-2 bm:text-blue-500 bm:transition bm:hover:brightness-90"
                 x-on:click="scrollToLastMessage"
             >
                 <x-basement::atoms.icons.fas-angle-down
@@ -287,12 +293,8 @@
             <x-basement::molecules.form-group class="bm:col-span-7">
                 <x-slot:title>Viesti</x-slot:title>
                 <x-slot:icon
-                    x-show="isLoadingSentMessage === true"
-                >
-                    <x-basement::atoms.icons.fas-circle-notch
-                        class="bm:ml-2 bm:h-[0.9rem] bm:animate-spin bm:text-blue-500"
-                    />
-                </x-slot:icon>
+                    class="bm:hidden"
+                ></x-slot:icon>
 
                 <x-basement::atoms.textarea
                     class="basement-private-messages__new-message-input"
@@ -300,7 +302,6 @@
                     aria-autocomplete="none"
                     aria-required="true"
                     x-bind:disabled="isLoadingSentMessage === true"
-                    x-bind:class="isLoadingSentMessage === true ? 'bm:pl-9' : ''"
                     x-ref="newMessageInput"
                     x-model="newMessageValue"
                     x-on:input="currentlyTyping"
@@ -319,12 +320,19 @@
             </x-basement::molecules.form-group>
 
             <x-basement::atoms.buttons.primary
-                class="basemment-private-messages__send-new-message-button-button bm:col-span-1 bm:h-full bm:w-8"
+                class="basemment-private-messages__send-new-message-button-button bm:relative bm:col-span-1 bm:h-full bm:w-8"
                 data-title="Lähetä viesti"
                 type="submit"
                 x-bind:disabled="isLoadingSentMessage === true"
             >
-                <x-basement::atoms.icons.fas-paper-plane class="bm:m-auto bm:h-4 bm:text-blue-500" />
+                <x-basement::atoms.icons.fas-paper-plane
+                    class="bm:m-auto bm:h-4 bm:text-blue-500 bm:transition-opacity bm:duration-150"
+                    x-bind:class="isLoadingSentMessage === true ? 'bm:opacity-0 bm:delay-200' : ''"
+                />
+                <x-basement::atoms.icons.fas-circle-notch
+                    class="bm:absolute bm:inset-0 bm:m-auto bm:h-4 bm:animate-spin bm:text-blue-500 bm:transition-opacity bm:duration-150 bm:delay-200 bm:starting:opacity-0"
+                    x-show="isLoadingSentMessage === true"
+                />
             </x-basement::atoms.buttons.primary>
         </form>
     </section>

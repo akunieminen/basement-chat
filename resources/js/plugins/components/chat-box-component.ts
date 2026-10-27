@@ -80,6 +80,8 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
   registerTippy(): void {
     delegate(this.$el, {
       animation: "fade",
+      delay: [200, 0],
+      duration: [150, 100],
       arrow: true,
       target: ".basement [data-title]",
       onShow(instance: Instance): void {

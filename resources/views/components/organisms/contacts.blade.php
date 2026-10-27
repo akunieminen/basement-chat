@@ -1,13 +1,14 @@
+{{-- leave = hold the opaque list under the sliding conversation; the no-op enter lets a quick "back" cancel that hold --}}
 <div
-    class="basement-contacts bm:relative bm:flex bm:h-full bm:w-full bm:flex-col bm:shadow-lg"
+    class="basement-contacts bm:absolute bm:inset-0 bm:isolate bm:flex bm:h-full bm:w-full bm:flex-col"
     data-url="{{ route('api.basement.contacts.index') }}"
     x-init="mount"
     x-data="basementContact"
     x-show="isContactOpened === true"
     x-modelable="unreadMessages"
     x-model="totalUnreadMessages"
-    x-transition.scale.origin.left
-    x-transition:enter.duration.500ms
+    x-transition:enter="bm:duration-0"
+    x-transition:leave="bm:duration-200"
 >
     <x-basement::organisms.header class="bm:z-30">
         <x-slot:title>
@@ -45,11 +46,7 @@
 
     <x-basement::organisms.offline-state x-show="online === false" />
 
-    <section
-        class="bm:relative bm:flex bm:flex-grow bm:flex-col bm:overflow-auto bm:bg-white bm:px-3 bm:text-gray-900"
-        x-show="isContactOpened"
-        x-transition=""
-    >
+    <section class="bm:relative bm:flex bm:flex-grow bm:flex-col bm:overflow-auto bm:bg-white bm:px-3 bm:text-gray-900">
 
         <x-basement::molecules.form-group class="bm:relative bm:col-span-full bm:block bm:py-4">
             <x-slot:title>Etsi kontakteja</x-slot:title>
@@ -126,14 +123,14 @@
                             <template x-if="contact.typing === true">
                                 <span x-bind:data-title="`${contact.name} kirjoittaa...`">
                                     <span
-                                        class="bm:inline-block bm:h-1 bm:w-1 bm:animate-bounce bm:rounded-full bm:bg-gray-900"
+                                        class="bm:inline-block bm:h-1 bm:w-1 bm:animate-typing bm:rounded-full bm:bg-gray-900"
                                     ></span>
                                     <span
-                                        class="bm:inline-block bm:h-1 bm:w-1 bm:animate-bounce bm:rounded-full bm:bg-gray-900"
+                                        class="bm:inline-block bm:h-1 bm:w-1 bm:animate-typing bm:rounded-full bm:bg-gray-900"
                                         style="animation-delay: 0.2s"
                                     ></span>
                                     <span
-                                        class="bm:inline-block bm:h-1 bm:w-1 bm:animate-bounce bm:rounded-full bm:bg-gray-900"
+                                        class="bm:inline-block bm:h-1 bm:w-1 bm:animate-typing bm:rounded-full bm:bg-gray-900"
                                         style="animation-delay: 0.4s"
                                     ></span>
                                 </span>

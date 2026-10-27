@@ -440,7 +440,9 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
       const lastMessage: PrivateMessageData | undefined = this.messages.at(0);
 
       this.scrollTo(lastMessage?.id ?? null, {
-        behavior: "smooth",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
       });
     },
 
