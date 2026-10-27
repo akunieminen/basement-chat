@@ -1,6 +1,7 @@
 {{-- The header stays out of the sheet's motion: its title and buttons swap in one frame, as one header changing (two headers
-     crossfading read as garbled text). Leaving, the header turns transparent at once but keeps taking clicks for the 150 ms,
-     so a quick second click on back cannot reach the contacts' minimize beneath; the body lets clicks through to the rows. --}}
+     crossfading read as garbled text). Leaving, the header turns transparent with the body's first frame (leave-end: before
+     it, a loading cover still lay under it) but keeps taking clicks for the 150 ms, so a quick second click on back cannot
+     reach the contacts' minimize beneath; the body lets clicks through to the rows. --}}
 <div
     class="basement-private-messages bm:absolute bm:inset-0 bm:isolate bm:flex bm:h-full bm:w-full bm:flex-col"
     data-url="{{ route('api.basement.contacts.private-messages.index', ['contact' => ':contact']) }}"
@@ -11,8 +12,8 @@
     x-show="isMessageBoxOpened"
     x-transition:enter="bm:duration-200 bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-200 bm:[&>:not(header)]:ease-out"
     x-transition:enter-start="bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
-    x-transition:leave="bm:pointer-events-none bm:duration-150 bm:[&>header]:pointer-events-auto bm:[&>header]:opacity-0 bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:ease-out"
-    x-transition:leave-end="bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
+    x-transition:leave="bm:pointer-events-none bm:duration-150 bm:[&>header]:pointer-events-auto bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:ease-out"
+    x-transition:leave-end="bm:[&>header]:opacity-0 bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
 >
     <x-basement::organisms.header class="bm:z-30">
         <x-slot:title
