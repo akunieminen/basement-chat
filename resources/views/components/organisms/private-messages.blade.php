@@ -276,8 +276,10 @@
                 class="bm:relative bm:rounded-full bm:border bm:bg-white bm:p-2 bm:text-blue-500 bm:transition bm:hover:brightness-90"
                 x-on:click="scrollToLastMessage"
             >
+                {{-- outline-none: its tooltip's focus listener makes Chrome focus the icon itself on a click, which drew
+                     a dark ring around it while the list scrolled down --}}
                 <x-basement::atoms.icons.fas-angle-down
-                    class="bm:h-5 bm:w-5"
+                    class="bm:h-5 bm:w-5 bm:outline-none"
                     data-title="Siirry viimeiseen viestiin"
                 />
 
