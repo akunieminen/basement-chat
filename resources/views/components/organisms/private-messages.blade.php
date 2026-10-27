@@ -1,7 +1,9 @@
 {{-- The header stays out of the sheet's motion: its title and buttons swap in one frame, as one header changing (two headers
-     crossfading read as garbled text). Leaving, the header turns transparent with the body's first frame (leave-end: before
-     it, a loading cover still lay under it) but keeps taking clicks for the 150 ms, so a quick second click on back cannot
-     reach the contacts' minimize beneath; the body lets clicks through to the rows. --}}
+     crossfading read as garbled text). Leaving, the header turns transparent with the body's first frame (leave-end) but
+     keeps taking clicks for the 225 ms, so a quick second click on back cannot reach the contacts' minimize beneath; the
+     body lets clicks through to the rows. The body hands off instead of crossfading (messages over contact rows), as the
+     slides do: the messages fade out on the white sheet (100 ms), then the empty sheet fades away over the list (150 ms,
+     from 75 ms). The loading cover (the section's first child) stays for that: it is white already. --}}
 <div
     class="basement-private-messages bm:absolute bm:inset-0 bm:isolate bm:flex bm:h-full bm:w-full bm:flex-col"
     data-url="{{ route('api.basement.contacts.private-messages.index', ['contact' => ':contact']) }}"
@@ -12,8 +14,8 @@
     x-show="isMessageBoxOpened"
     x-transition:enter="bm:duration-200 bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-200 bm:[&>:not(header)]:ease-out"
     x-transition:enter-start="bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
-    x-transition:leave="bm:pointer-events-none bm:duration-150 bm:[&>header]:pointer-events-auto bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:ease-out"
-    x-transition:leave-end="bm:[&>header]:opacity-0 bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
+    x-transition:leave="bm:pointer-events-none bm:duration-225 bm:[&>header]:pointer-events-auto bm:[&>:not(header)]:transition-opacity bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:delay-75 bm:[&>:not(header)]:ease-out bm:[&>section>:not(:first-child)]:transition-opacity bm:[&>section>:not(:first-child)]:duration-100 bm:[&>section>:not(:first-child)]:delay-0 bm:[&>section>:not(:first-child)]:ease-out"
+    x-transition:leave-end="bm:[&>header]:opacity-0 bm:[&>:not(header)]:opacity-0 bm:[&>section>:not(:first-child)]:opacity-0"
 >
     <x-basement::organisms.header class="bm:z-30">
         <x-slot:title
@@ -85,18 +87,23 @@
     </div>
 
     <section
-        class="bm:flex bm:flex-grow bm:flex-col bm:justify-between bm:overflow-y-auto bm:bg-white bm:text-gray-900">
+        class="bm:relative bm:flex bm:flex-grow bm:flex-col bm:justify-between bm:overflow-y-auto bm:bg-white bm:text-gray-900">
         {{-- The loading cover fades in with the messages it hides, as one layer: as a sibling, the previous contact's
-             messages showed through it while both faded in. top-0: at rest it still covers the whole sheet, as before. --}}
+             messages showed through it while both faded in. It covers the section (relative), not the header's place: a
+             back click turns the header transparent at once, and the contacts' header must show there. It also stays
+             while the sheet fades in (200 ms, entering): messages uncovered earlier showed the contact list through the
+             sheet. The spinner waits for that hold and the cover's fade-out (350 ms), so a quick answer never shows it. --}}
         <div
             class="bm:absolute bm:top-0 bm:z-20 bm:h-full bm:w-full bm:bg-white bm:text-5xl"
-            x-show="isLoading === true"
+            x-data="{ entering: false }"
+            x-effect="isMessageBoxOpened && (entering = true, setTimeout(() => (entering = false), 200))"
+            x-show="isLoading === true || entering"
             x-transition:enter="bm:duration-0"
             x-transition:leave="bm:transition-opacity bm:duration-150 bm:ease-out"
             x-transition:leave-end="bm:opacity-0"
         >
             <div
-                class="bm:flex bm:h-full bm:w-full bm:items-center bm:justify-center bm:transition-opacity bm:duration-150 bm:delay-200 bm:starting:opacity-0">
+                class="bm:flex bm:h-full bm:w-full bm:items-center bm:justify-center bm:transition-opacity bm:duration-150 bm:delay-350 bm:starting:opacity-0">
                 <x-basement::atoms.icons.fas-circle-notch class="bm:w-12 bm:animate-spin bm:text-blue-500" />
             </div>
         </div>
