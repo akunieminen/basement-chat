@@ -45,6 +45,7 @@
             <x-basement::atoms.buttons.header
                 data-title="Takaisin kontakteihin"
                 x-on:click="isContactOpened = true; isMessageBoxOpened = false"
+                data-back
             >
                 <x-basement::atoms.icons.fas-angle-left class="bm:m-auto bm:h-[0.9rem]" />
             </x-basement::atoms.buttons.header>
@@ -111,15 +112,16 @@
         {{-- The search panel hangs from where it stands (3 px under the header, as top-12 did), not from an offset: the sheet's
              slide makes the section its containing block, and an offset jumped 45 px when back closed the open panel. Its wrapper
              stacks above the messages (z-10 on a flex item): while back fades the section's children, each becomes its own
-             stacking context and the messages were drawn over the open panel. It stays out of that fade (data-search): the
-             panel runs its own close fade, and both together made it vanish ahead of the messages under it. --}}
-        <div class="bm:z-10" data-search>
+             stacking context and the messages were drawn over the open panel. It stays out of that fade (data-search), and
+             back does not close the panel: it stays solid over the fading messages, then leaves with the whole sheet as one
+             layer (any fade of its own let the messages show through it), and closes unseen once the sheet is gone. --}}
+        <div class="bm:z-10" data-search x-init="$watch('isMessageBoxOpened', (open) => open || setTimeout(() => (isSearchOpened = false), 250))">
             <x-basement::molecules.form-group
                 class="bm:absolute bm:left-0 bm:mt-[3px] bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
                 x-transition.origin.top=""
                 x-transition:leave.opacity=""
                 x-show="isSearchOpened"
-                x-on:click.outside="isSearchOpened = false"
+                x-on:click.outside="$event.target.closest('[data-back]') || (isSearchOpened = false)"
             >
 
                 <x-slot:title>Etsi viesteistä</x-slot:title>
