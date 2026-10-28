@@ -109,8 +109,10 @@
         </div>
 
         {{-- The search panel hangs from where it stands (3 px under the header, as top-12 did), not from an offset: the sheet's
-             slide makes the section its containing block, and an offset jumped 45 px when back closed the open panel. --}}
-        <div>
+             slide makes the section its containing block, and an offset jumped 45 px when back closed the open panel. Its wrapper
+             stacks above the messages (z-10 on a flex item): while back fades the section's children, each becomes its own
+             stacking context and the messages were drawn over the open panel. --}}
+        <div class="bm:z-10">
             <x-basement::molecules.form-group
                 class="bm:absolute bm:left-0 bm:mt-[3px] bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
                 x-transition.origin.top=""

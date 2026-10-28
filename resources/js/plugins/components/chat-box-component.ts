@@ -8,6 +8,7 @@ import type { PushNotificationEvent } from "../types/events";
 export default (): AlpineComponent<ChatBoxComponent> => ({
   isMinimized: true,
   isExpanded: false,
+  isLauncherShown: true,
   isContactOpened: true,
   isMessageBoxOpened: false,
   isNotificationAllowed:
@@ -29,13 +30,18 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
       this.online = false;
     });
 
-    // The box keeps its open size until the window has shrunk back into the launcher (its 200 ms leave), so the
-    // window has room to leave the way it came; the launcher then fades in.
+    // Opening, the launcher fades out while the window grows over it (the corner is never empty). Minimizing, the box
+    // keeps its open size until the window has shrunk back into the launcher (its 200 ms leave), so the window has room
+    // to leave the way it came; the launcher fades in under the window's last 80 ms.
     this.$watch("isMinimized", (minimized: boolean): void => {
       if (!minimized) {
         this.isExpanded = true;
+        this.isLauncherShown = false;
         return;
       }
+      setTimeout((): void => {
+        if (this.isMinimized) this.isLauncherShown = true;
+      }, 120);
       setTimeout((): void => {
         if (this.isMinimized) this.isExpanded = false;
       }, 200);

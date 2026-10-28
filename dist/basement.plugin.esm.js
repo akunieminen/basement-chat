@@ -3651,6 +3651,7 @@ var NotificationStatus$1 = NotificationStatus;
 var chatBoxComponent = () => ({
     isMinimized: true,
     isExpanded: false,
+    isLauncherShown: true,
     isContactOpened: true,
     isMessageBoxOpened: false,
     isNotificationAllowed: window.localStorage.getItem("basement.notification") ===
@@ -3668,13 +3669,19 @@ var chatBoxComponent = () => ({
         window.addEventListener("offline", () => {
             this.online = false;
         });
-        // The box keeps its open size until the window has shrunk back into the launcher (its 200 ms leave), so the
-        // window has room to leave the way it came; the launcher then fades in.
+        // Opening, the launcher fades out while the window grows over it (the corner is never empty). Minimizing, the box
+        // keeps its open size until the window has shrunk back into the launcher (its 200 ms leave), so the window has room
+        // to leave the way it came; the launcher fades in under the window's last 80 ms.
         this.$watch("isMinimized", (minimized) => {
             if (!minimized) {
                 this.isExpanded = true;
+                this.isLauncherShown = false;
                 return;
             }
+            setTimeout(() => {
+                if (this.isMinimized)
+                    this.isLauncherShown = true;
+            }, 120);
             setTimeout(() => {
                 if (this.isMinimized)
                     this.isExpanded = false;
