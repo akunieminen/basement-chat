@@ -14,7 +14,7 @@
     >
 
         {{-- Unread: the launcher turns red with the count in white. On load with unread messages and on every new one, a soft
-             ring leaves it twice; then the red holds the state (alerts play twice). (No pop of the launcher itself: scaling it
+             ring leaves it four times (the owner wanted it noticeable); then the red holds the state. (No pop of the launcher itself: scaling it
              while its colour changed drew tile seams across it in Firefox.) --}}
         <span
             class="bm:pointer-events-none bm:absolute bm:inset-0 bm:rounded-full bm:bg-red-500 bm:opacity-0"
@@ -33,7 +33,7 @@
             x-bind:data-title="totalUnreadMessages === 0 ? 'Katso viestit' : `Sinulla on ${totalUnreadMessages} uutta viestiä`"
             x-init="$watch('totalUnreadMessages', (count, before) => {
                 if (count <= before || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                $refs.unreadRing.animate({ scale: [1, 1.6], opacity: [0.45, 0] }, { duration: 1000, easing: 'cubic-bezier(0, 0, 0.2, 1)', iterations: 2 });
+                $refs.unreadRing.animate({ scale: [1, 2], opacity: [0.7, 0] }, { duration: 1000, easing: 'cubic-bezier(0, 0, 0.2, 1)', iterations: 4 });
             })"
         >
             <template x-if="totalUnreadMessages === 0">
