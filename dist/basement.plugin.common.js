@@ -3673,7 +3673,8 @@ var chatBoxComponent = () => ({
         });
         // Opening, the launcher fades out while the window grows over it (the corner is never empty). Minimizing, the box
         // keeps its open size until the window has shrunk back into the launcher (its 200 ms leave), so the window has room
-        // to leave the way it came; the launcher fades in under the window's last 80 ms.
+        // to leave the way it came; the launcher starts fading in at 80 ms (visible about two frames later), while the
+        // window is still fading, so the corner never sits empty.
         this.$watch("isMinimized", (minimized) => {
             if (!minimized) {
                 this.isExpanded = true;
@@ -3683,7 +3684,7 @@ var chatBoxComponent = () => ({
             setTimeout(() => {
                 if (this.isMinimized)
                     this.isLauncherShown = true;
-            }, 120);
+            }, 80);
             setTimeout(() => {
                 if (this.isMinimized)
                     this.isExpanded = false;

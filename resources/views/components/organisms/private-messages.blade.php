@@ -14,8 +14,8 @@
     x-show="isMessageBoxOpened"
     x-transition:enter="bm:duration-200 bm:[&>:not(header)]:transition bm:[&>:not(header)]:duration-200 bm:[&>:not(header)]:ease-out"
     x-transition:enter-start="bm:[&>:not(header)]:opacity-0 bm:motion-safe:[&>:not(header)]:translate-x-3"
-    x-transition:leave="bm:pointer-events-none bm:duration-225 bm:[&>header]:pointer-events-auto bm:[&>:not(header)]:transition-opacity bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:delay-75 bm:[&>:not(header)]:ease-out bm:[&>section>:not(:first-child)]:transition-opacity bm:[&>section>:not(:first-child)]:duration-100 bm:[&>section>:not(:first-child)]:delay-0 bm:[&>section>:not(:first-child)]:ease-out"
-    x-transition:leave-end="bm:[&>header]:opacity-0 bm:[&>:not(header)]:opacity-0 bm:[&>section>:not(:first-child)]:opacity-0"
+    x-transition:leave="bm:pointer-events-none bm:duration-225 bm:[&>header]:pointer-events-auto bm:[&>:not(header)]:transition-opacity bm:[&>:not(header)]:duration-150 bm:[&>:not(header)]:delay-75 bm:[&>:not(header)]:ease-out bm:[&>section>:not(:first-child,[data-search])]:transition-opacity bm:[&>section>:not(:first-child,[data-search])]:duration-100 bm:[&>section>:not(:first-child,[data-search])]:delay-0 bm:[&>section>:not(:first-child,[data-search])]:ease-out"
+    x-transition:leave-end="bm:[&>header]:opacity-0 bm:[&>:not(header)]:opacity-0 bm:[&>section>:not(:first-child,[data-search])]:opacity-0"
 >
     <x-basement::organisms.header class="bm:z-30">
         <x-slot:title
@@ -111,8 +111,9 @@
         {{-- The search panel hangs from where it stands (3 px under the header, as top-12 did), not from an offset: the sheet's
              slide makes the section its containing block, and an offset jumped 45 px when back closed the open panel. Its wrapper
              stacks above the messages (z-10 on a flex item): while back fades the section's children, each becomes its own
-             stacking context and the messages were drawn over the open panel. --}}
-        <div class="bm:z-10">
+             stacking context and the messages were drawn over the open panel. It stays out of that fade (data-search): the
+             panel runs its own close fade, and both together made it vanish ahead of the messages under it. --}}
+        <div class="bm:z-10" data-search>
             <x-basement::molecules.form-group
                 class="bm:absolute bm:left-0 bm:mt-[3px] bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
                 x-transition.origin.top=""
