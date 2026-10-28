@@ -13,10 +13,10 @@
         ])
     >
 
-        {{-- The launcher keeps its own 56 px corner while the box grows (it fades out over the growing window, and back in as
-             the window shrinks into it). Unread: it turns red with the count in white. On load with unread messages and on
-             every new one, a soft ring leaves it four times (the owner wanted it noticeable); then the red holds the state.
-             (No pop of the launcher itself: scaling it while its colour changed drew tile seams across it in Firefox.) --}}
+        {{-- The launcher keeps its own 56 px corner while the box grows: it fades out over the growing window, and back in as the
+             window shrinks into it. Unread: it turns red with the count in white; on load with unread messages and on every new one,
+             a soft ring leaves it four times, then the red holds the state. The launcher itself never scales: scaling it while its
+             colour changes draws tile seams across it in Firefox. --}}
         <div
             @class([
                 'bm:absolute bm:bottom-0 bm:h-14 bm:w-14',

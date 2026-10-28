@@ -1,9 +1,8 @@
-{{-- The header stays out of the sheet's motion: its title and buttons swap in one frame, as one header changing (two headers
-     crossfading read as garbled text). Leaving, the header turns transparent with the body's first frame (leave-end) but
-     keeps taking clicks for the 225 ms, so a quick second click on back cannot reach the contacts' minimize beneath; the
-     body lets clicks through to the rows. The body hands off instead of crossfading (messages over contact rows), as the
-     slides do: the messages fade out on the white sheet (100 ms), then the empty sheet fades away over the list (150 ms,
-     from 75 ms). The loading cover (the section's first child) stays for that: it is white already. --}}
+{{-- The header stays out of the sheet's motion: its title and buttons swap in one frame, as one header changing. Leaving,
+     the header turns transparent with the body's first frame but keeps taking clicks for the 225 ms, so a quick second
+     click on back cannot reach the contacts' minimize beneath; the body lets clicks through to the rows. The body hands off
+     rather than crossfading: the messages fade out on the white sheet (100 ms), then the empty sheet fades away over the
+     list (150 ms, from 75 ms). The loading cover (the section's first child) stays for that: it is white already. --}}
 <div
     class="basement-private-messages bm:absolute bm:inset-0 bm:isolate bm:flex bm:h-full bm:w-full bm:flex-col"
     data-url="{{ route('api.basement.contacts.private-messages.index', ['contact' => ':contact']) }}"
@@ -89,11 +88,10 @@
 
     <section
         class="bm:relative bm:flex bm:flex-grow bm:flex-col bm:justify-between bm:overflow-y-auto bm:bg-white bm:text-gray-900">
-        {{-- The loading cover fades in with the messages it hides, as one layer: as a sibling, the previous contact's
-             messages showed through it while both faded in. It covers the section (relative), not the header's place: a
-             back click turns the header transparent at once, and the contacts' header must show there. It also stays
-             while the sheet fades in (200 ms, entering): messages uncovered earlier showed the contact list through the
-             sheet. The spinner waits for that hold and the cover's fade-out (350 ms), so a quick answer never shows it. --}}
+        {{-- The loading cover fades in with the messages it hides, as one layer, and covers the section (relative), not the header's
+             place: back turns the header transparent at once, and the contacts' header must show there. It also stays while the
+             sheet fades in (200 ms, entering), so the contact list never shows through freshly loaded messages. The spinner waits
+             for that and the cover's fade-out (350 ms), so a quick answer never shows it. --}}
         <div
             class="bm:absolute bm:top-0 bm:z-20 bm:h-full bm:w-full bm:bg-white bm:text-5xl"
             x-data="{ entering: false }"
@@ -109,12 +107,10 @@
             </div>
         </div>
 
-        {{-- The search panel hangs from where it stands (3 px under the header, as top-12 did), not from an offset: the sheet's
-             slide makes the section its containing block, and an offset jumped 45 px when back closed the open panel. Its wrapper
-             stacks above the messages (z-10 on a flex item): while back fades the section's children, each becomes its own
-             stacking context and the messages were drawn over the open panel. It stays out of that fade (data-search), and
-             back does not close the panel: it stays solid over the fading messages, then leaves with the whole sheet as one
-             layer (any fade of its own let the messages show through it), and closes unseen once the sheet is gone. --}}
+        {{-- The search panel hangs from where it stands (3 px under the header), not from an offset: the sheet's slide makes the
+             section its containing block, so an offset would jump when back closes the panel. Its wrapper stacks above the messages
+             (z-10 on a flex item) and stays out of back's message fade (data-search). Back does not close the panel: it stays solid
+             over the fading messages, leaves with the whole sheet as one layer, and closes unseen afterwards. --}}
         <div class="bm:z-10" data-search x-init="$watch('isMessageBoxOpened', (open) => open || setTimeout(() => (isSearchOpened = false), 250))">
             <x-basement::molecules.form-group
                 class="bm:absolute bm:left-0 bm:mt-[3px] bm:z-10 bm:w-full bm:rounded-lg bm:bg-white bm:p-2 bm:text-gray-900 bm:shadow-lg"
@@ -289,8 +285,8 @@
                 class="bm:relative bm:rounded-full bm:border bm:bg-white bm:p-2 bm:text-blue-500 bm:transition bm:hover:brightness-90"
                 x-on:click="scrollToLastMessage"
             >
-                {{-- outline-none: its tooltip's focus listener makes Chrome focus the icon itself on a click, which drew
-                     a dark ring around it while the list scrolled down --}}
+                {{-- outline-none: its tooltip's focus listener makes Chrome focus the icon itself on a click, which would draw a dark
+                     ring around it --}}
                 <x-basement::atoms.icons.fas-angle-down
                     class="bm:h-5 bm:w-5 bm:outline-none"
                     data-title="Siirry viimeiseen viestiin"

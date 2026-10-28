@@ -30,10 +30,9 @@ export default (): AlpineComponent<ChatBoxComponent> => ({
       this.online = false;
     });
 
-    // Opening, the launcher fades out while the window grows over it (the corner is never empty). Minimizing, the box
-    // keeps its open size until the window has shrunk back into the launcher (its 200 ms leave), so the window has room
-    // to leave the way it came; the launcher starts fading in at 80 ms (visible about two frames later), while the
-    // window is still fading, so the corner never sits empty.
+    // Opening: the launcher fades out while the window grows over it. Minimizing: the box keeps its open size until the
+    // window has shrunk back (its 200 ms leave), and the launcher starts fading in at 80 ms under the still-fading window,
+    // so the corner is never empty.
     this.$watch("isMinimized", (minimized: boolean): void => {
       if (!minimized) {
         this.isExpanded = true;
