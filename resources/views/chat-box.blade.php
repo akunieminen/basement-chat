@@ -13,21 +13,35 @@
         ])
     >
 
+        {{-- Unread: the launcher turns red with the count in white. On load with unread messages and on every new one, a soft
+             ring leaves it twice; then the red holds the state (alerts play twice). (No pop of the launcher itself: scaling it
+             while its colour changed drew tile seams across it in Firefox.) --}}
+        <span
+            class="bm:pointer-events-none bm:absolute bm:inset-0 bm:rounded-full bm:bg-red-500 bm:opacity-0"
+            x-ref="unreadRing"
+            x-show="isMinimized === true"
+        ></span>
         <button
-            class="basement-chat-box__open-button bm:h-full bm:w-full bm:rounded-full bm:border bm:text-blue-500 bm:shadow-lg bm:transition bm:hover:bg-blue-500 bm:hover:text-white"
+            class="basement-chat-box__open-button bm:relative bm:h-full bm:w-full bm:rounded-full bm:border bm:shadow-lg bm:transition"
             x-on:click="isMinimized = false"
             x-bind:class="[
                 isMinimized === true ? '' : 'bm:hidden',
-                totalUnreadMessages > 0 ? 'bm:bg-red-500' : 'bm:bg-white'
+                totalUnreadMessages > 0
+                    ? 'bm:border-red-500 bm:bg-red-500 bm:text-white bm:hover:bg-red-600'
+                    : 'bm:bg-white bm:text-blue-500 bm:hover:bg-blue-500 bm:hover:text-white'
             ]"
             x-bind:data-title="totalUnreadMessages === 0 ? 'Katso viestit' : `Sinulla on ${totalUnreadMessages} uutta viestiä`"
+            x-init="$watch('totalUnreadMessages', (count, before) => {
+                if (count <= before || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                $refs.unreadRing.animate({ scale: [1, 1.6], opacity: [0.45, 0] }, { duration: 1000, easing: 'cubic-bezier(0, 0, 0.2, 1)', iterations: 2 });
+            })"
         >
             <template x-if="totalUnreadMessages === 0">
                 <x-basement::atoms.icons.far-comments class="bm:m-auto bm:h-auto bm:w-10" />
             </template>
             <template x-if="totalUnreadMessages > 0">
                 <span
-                    class="bm:text-xl bm:font-extrabold"
+                    class="bm:text-xl bm:font-bold bm:tabular-nums"
                     x-text="totalUnreadMessages > 99 ? '99+' : totalUnreadMessages"
                 ></span>
             </template>
