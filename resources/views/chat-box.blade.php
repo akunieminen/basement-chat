@@ -3,7 +3,7 @@
         data-echo-options="{{ json_encode($echoOptions) }}"
         x-ref="basementChatBox"
         x-data="basementChatBox"
-        x-bind:class="isMinimized === true ? '' : 'bm:w-[22rem]! bm:max-w-[90vw] bm:h-[32rem]! bm:max-h-full bm:pt-6'"
+        x-bind:class="isExpanded ? 'bm:w-[22rem]! bm:max-w-[90vw] bm:h-[32rem]! bm:max-h-full bm:pt-6' : ''"
         @class([
             'basement-chat-box bm:h-14 bm:w-14 bm:fixed bm:z-10',
             'bm:bottom-3 bm:left-3' =>
@@ -19,13 +19,13 @@
         <span
             class="bm:pointer-events-none bm:absolute bm:inset-0 bm:rounded-full bm:bg-red-500 bm:opacity-0"
             x-ref="unreadRing"
-            x-show="isMinimized === true"
+            x-show="isMinimized === true && !isExpanded"
         ></span>
         <button
-            class="basement-chat-box__open-button bm:relative bm:h-full bm:w-full bm:rounded-full bm:border bm:shadow-lg bm:transition"
+            class="basement-chat-box__open-button bm:relative bm:h-full bm:w-full bm:rounded-full bm:border bm:shadow-lg bm:transition bm:starting:opacity-0 bm:motion-safe:starting:scale-75"
             x-on:click="isMinimized = false"
             x-bind:class="[
-                isMinimized === true ? '' : 'bm:hidden',
+                isMinimized === true && !isExpanded ? '' : 'bm:hidden',
                 totalUnreadMessages > 0
                     ? 'bm:border-red-500 bm:bg-red-500 bm:text-white bm:hover:bg-red-600'
                     : 'bm:bg-white bm:text-blue-500 bm:hover:bg-blue-500 bm:hover:text-white'
@@ -47,15 +47,24 @@
             </template>
         </button>
 
+        {{-- The window grows out of the launcher's corner and shrinks back into it: scale runs longer than the fade on the way
+             in, and on the way out the fade waits, so the shrinking window stays visible until it is launcher-sized. --}}
         <div
             @class([
-                'bm:hidden bm:relative bm:h-full bm:w-full bm:overflow-hidden bm:shadow-lg bm:transition bm:duration-200 bm:ease-out bm:starting:opacity-0 bm:motion-safe:starting:scale-95',
+                'bm:relative bm:h-full bm:w-full bm:overflow-hidden bm:shadow-lg',
                 'bm:origin-bottom-left' =>
                     $position === \BasementChat\Basement\Enums\ChatBoxPosition::BottomLeft,
                 'bm:origin-bottom-right' =>
                     $position === \BasementChat\Basement\Enums\ChatBoxPosition::BottomRight,
             ])
-            x-bind:class="isMinimized === true ? '' : 'bm:block!'"
+            style="display: none"
+            x-show="isMinimized !== true"
+            x-transition:enter="bm:[transition:opacity_150ms_var(--bm-ease-out),scale_250ms_var(--bm-ease-out)]"
+            x-transition:enter-start="bm:opacity-0 bm:motion-safe:scale-[0.15]"
+            x-transition:enter-end="bm:opacity-100 bm:scale-100"
+            x-transition:leave="bm:[transition:opacity_120ms_var(--bm-ease-out)_80ms,scale_200ms_var(--bm-ease-out)]"
+            x-transition:leave-start="bm:opacity-100 bm:scale-100"
+            x-transition:leave-end="bm:opacity-0 bm:motion-safe:scale-[0.15]"
         >
             <x-basement::organisms.contacts />
             <x-basement::organisms.private-messages />

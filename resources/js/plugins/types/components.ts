@@ -14,6 +14,7 @@ import type {
 
 export interface ChatBoxComponent {
   isMinimized: boolean;
+  isExpanded: boolean;
   isContactOpened: boolean;
   isMessageBoxOpened: boolean;
   isNotificationAllowed: boolean;
