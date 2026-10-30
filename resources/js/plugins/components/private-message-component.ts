@@ -28,7 +28,7 @@ export default (): AlpineComponent<PrivateMessageComponent> => {
     "data-currently-typing-url",
   )!;
   const userId = Number(container.getAttribute("data-user-id")!);
-  const typingsTimeout = new Map<number, NodeJS.Timeout>();
+  const typingsTimeout = new Map<number, ReturnType<typeof setTimeout>>();
   // The indicator must outlive the gap between two signals (plus network
   // jitter), otherwise it flickers while the contact is still typing.
   const typingSignalInterval = 3000;

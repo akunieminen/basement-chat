@@ -4,7 +4,6 @@ import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 import { defineConfig } from "rollup";
-import filesize from "rollup-plugin-filesize";
 import postcss from "rollup-plugin-postcss";
 
 export default defineConfig([
@@ -30,7 +29,6 @@ export default defineConfig([
       }),
       terser(),
       typescript(),
-      filesize(),
     ],
   },
   {
@@ -48,7 +46,7 @@ export default defineConfig([
         exports: "default",
       },
     ],
-    plugins: [resolve(), commonjs(), typescript(), filesize()],
+    plugins: [resolve(), commonjs(), typescript()],
   },
   {
     input: "./resources/js/plugins/echo-options.ts",
@@ -65,6 +63,6 @@ export default defineConfig([
         exports: "default",
       },
     ],
-    plugins: [typescript(), filesize()],
+    plugins: [typescript()],
   },
 ]);
