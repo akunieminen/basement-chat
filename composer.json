@@ -33,7 +33,7 @@
     "orchestra/testbench-dusk": "^10.11 || ^11.4",
     "phpstan/phpstan-deprecation-rules": "^2.0.5",
     "phpstan/phpstan-phpunit": "^2.0.18",
-    "phpunit/phpunit": "^11.5.50 || ^12.5.8",
+    "phpunit/phpunit": "^11.5.50 || ^12.5.8 || ^13.0",
     "pusher/pusher-php-server": "^7.3"
   },
   "autoload": {

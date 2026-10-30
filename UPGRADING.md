@@ -16,4 +16,4 @@ This fork targets modern Laravel. Review the following before updating:
 - **Test harness:** the browser suite, CI workflow and devcontainer run against Laravel Reverb (`laravel/reverb` is a dev dependency) instead of soketi; `@soketi/soketi` and the `uWebSockets.js` override are gone from `package.json`. The `soketi` broadcast driver itself is still available to applications.
 - **Route caching** (`php artisan route:cache`) is now supported.
 - **Rate limiting:** the package registers a `throttle:api` fallback limiter (60 requests per minute per user/IP) when the application defines none. Define your own `api` limiter to override it.
-- **Contributors:** the test suite runs on PHPUnit 11.5.50+ / 12, orchestra/testbench 10 (Laravel 12) or 11 (Laravel 13); Feature/Unit tests no longer need a websocket server.
+- **Contributors:** the test suite runs on PHPUnit 11.5.50+ / 12 / 13 (13 needs PHP 8.4), orchestra/testbench 10 (Laravel 12) or 11 (Laravel 13); Feature/Unit tests no longer need a websocket server.
