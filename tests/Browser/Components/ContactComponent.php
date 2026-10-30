@@ -24,7 +24,7 @@ class ContactComponent extends BaseComponent
      */
     public function assert(Browser $browser): void
     {
-        $browser->assertVisible($this->selector());
+        $browser->waitFor($this->selector());
     }
 
     /**
