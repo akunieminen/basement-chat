@@ -97,26 +97,26 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: browser screenshots
+          name: browser screenshots ${{ strategy.job-index }}
           path: tests/Browser/screenshots
 
       - name: Upload browser console logs
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: browser console
+          name: browser console ${{ strategy.job-index }}
           path: tests/Browser/console
 
       - name: Upload testbench core logs
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: testbench core
+          name: testbench core ${{ strategy.job-index }}
           path: vendor/orchestra/testbench-core/laravel/storage/logs/
 
       - name: Upload testbench dusk logs
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: testbench dusk
+          name: testbench dusk ${{ strategy.job-index }}
           path: vendor/orchestra/testbench-dusk/laravel/storage/logs/
